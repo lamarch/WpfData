@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
+  <asmv1:assemblyIdentity name="WpfData.exe" version="1.0.0.0" publicKeyToken="e5ef230ad3a6c778" language="neutral" processorArchitecture="msil" type="win32" />
+  <description asmv2:iconFile="icon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
+  <application />
+  <entryPoint>
+    <assemblyIdentity name="WpfData" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <commandLine file="WpfData.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+    <security>
+      <applicationRequestMinimum>
+        <PermissionSet Unrestricted="true" ID="Custom" SameSite="site" />
+        <defaultAssemblyRequest permissionSetReference="Custom" />
+      </applicationRequestMinimum>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!--
+          Options de manifeste UAC
+          Pour changer le niveau du contrôle de compte d'utilisateur Windows, remplacez le
+          nœud requestedExecutionLevel par l'une des propositions suivantes.
+
+        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+
+         Pour utiliser la virtualisation des fichiers et du Registre afin d'assurer
+         une compatibilité ascendante, supprimez le nœud requestedExecutionLevel.
+    -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentOS>
+      <osVersionInfo>
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
+      </osVersionInfo>
+    </dependentOS>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="4.0.30319.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LiveCharts.dll" size="152064">
+      <assemblyIdentity name="LiveCharts" version="0.9.7.0" publicKeyToken="0BC1F845D1EBB8DF" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>n8+Jg3tg9pwcUB5M+k0oYIh6/QuPMlgDNn55Wk47yco=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LiveCharts.Wpf.dll" size="217600">
+      <assemblyIdentity name="LiveCharts.Wpf" version="0.9.7.0" publicKeyToken="0BC1F845D1EBB8DF" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>G9uxtcGlBlPlwmFh6bfAPtxRhyGm4Q6hgKhASdlnEGs=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="WpfData.exe" size="311640">
+      <assemblyIdentity name="WpfData" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>RTcmK2fI50h1nqO7tqB/VPSg2e5t5gALAO7FYaI5lbA=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="icon.ico" size="138028">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>XGg9gvlPfmVsF23VocWwHr/TtZs0BPvyOJevEmMdF5w=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="WpfData.exe.config" size="189">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>R+Wg8QGvQVHX8T0ta/qbhH1bXkqY0fRnS3wBV3J0bN8=</dsig:DigestValue>
+    </hash>
+  </file>
+<publisherIdentity name="CN=Paul Marchal" issuerKeyHash="6996ef31b22b8e7f36891117b7288f7533dbd9d6" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>JJE3OU1Xjl+vV7BVHOD4VXMJTuwHb4FUmlfDs16WsxM=</DigestValue></Reference></SignedInfo><SignatureValue>hSVKVge80TiVfhjQdat5nZBMqf2TNXhTLW76O6BcpVXkUQHYr3SeCoa+FFsbgdj6KP1g6q4DN6Ci3YbB3SLDGXXjGL7kkZvFJ0PuqQ/FGOg1zLPIpgPnOAHdI6by3b5hW9yDj9ofBxytKVjBNdjiNCv5dTSlr9Fp1Wm4Cmb/32X5FBCX68TnvCF1qke8o+1rBPoIEM/DF9hfd1HS1RULZOdG7LDYXM0gj4zQ0j/iVeOlA8ViBYujOgi6mP0ABmDW35LLEWI6TZsggNBdFiH48Kjh5v3v+6DUJ+7IYgNwXrZHO4t6N/FQlLoeQQ3xyPIQ/1VkK9bl/zG0LXtCF8uB5w==</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>nf4AKcu3HcWkt174q7b6pQ17IObS2LTwpMG5R/nkouSeDH/pyNUSFx8jAz7NkF+78ADiKLO4Fvzf3U6zWZDlJEI+nM1ROYbO+mTLqOtQhJxyzszQESFBzEyPEmhqljNFMsfDgyW1wQh/n0iWUoNGyZ2fnbblSoHSzla+dXz8oMaNyNfWCj2gxFJxZgUgCTTIuciRQKtqoVeYyV45F7JWSlLRie0Z1gDCfj1J19XMVJ9vJ5IKROf0toVszE3E9Xz6uVivmFKLHS9yW4do0Q0+ydkx88UGrn4OmpZRzpS6Gub8Tp1fG4DpGu77oTemQj30xtpG8GnyhFELlbhT2hg/WQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="13b3965eb3c3579a54816f07ec4e097355f8e01c55b057af5f8e574d39379124" Description="" Url=""><as:assemblyIdentity name="WpfData.exe" version="1.0.0.0" publicKeyToken="e5ef230ad3a6c778" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=Paul Marchal</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>MrLGV+xOP1NURsfsoOMI1Jg1WkwnjeRvkeIQVnon9EQ=</DigestValue></Reference></SignedInfo><SignatureValue>Y8ZFicGSGxD4MXW+ZMyuCyg9resMLQtITFlcaNE++jS5je7JAszKjhuZ59DJZoEY5m1EfcqGoTZEb7ytfdB3UNsDk8NG6RDIAxX9KRKP/9WrbeFaqLjqvL+D5xwjeBMgs6tuhucd30KYuPS+GjFMsgS8PL203lb1FQgRjnewIqtfuGEhWKwICv3dHa8q1aa3VbsptyYEGsXgo7eumTSrJD4+wXnpoYytIW1wazAyPzRYblEzJiOcBcFXsdJj6+rMsMcMASE1rOBnvyBGsEXmkCb2T44A3rIpNogao/CTgERWH75TdwldZ89yvs31Y97U/p7RY9tVXmhwzzlIc6/jCw==</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>nf4AKcu3HcWkt174q7b6pQ17IObS2LTwpMG5R/nkouSeDH/pyNUSFx8jAz7NkF+78ADiKLO4Fvzf3U6zWZDlJEI+nM1ROYbO+mTLqOtQhJxyzszQESFBzEyPEmhqljNFMsfDgyW1wQh/n0iWUoNGyZ2fnbblSoHSzla+dXz8oMaNyNfWCj2gxFJxZgUgCTTIuciRQKtqoVeYyV45F7JWSlLRie0Z1gDCfj1J19XMVJ9vJ5IKROf0toVszE3E9Xz6uVivmFKLHS9yW4do0Q0+ydkx88UGrn4OmpZRzpS6Gub8Tp1fG4DpGu77oTemQj30xtpG8GnyhFELlbhT2hg/WQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIC4DCCAcigAwIBAgIQFU3wkk7j8bdP2cHtUXihFDANBgkqhkiG9w0BAQsFADAXMRUwEwYDVQQDEwxQYXVsIE1hcmNoYWwwHhcNMjAwMjIyMTcxMTM0WhcNMjEwMjIxMjMxMTM0WjAXMRUwEwYDVQQDEwxQYXVsIE1hcmNoYWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCd/gApy7cdxaS3XvirtvqlDXsg5tLYtPCkwblH+eSi5J4Mf+nI1RIXHyMDPs2QX7vwAOIos7gW/N/dTrNZkOUkQj6czVE5hs76ZMuo61CEnHLOzNARIUHMTI8SaGqWM0Uyx8ODJbXBCH+fSJZSg0bJnZ+dtuVKgdLOVr51fPygxo3I19YKPaDEUnFmBSAJNMi5yJFAq2qhV5jJXjkXslZKUtGJ7RnWAMJ+PUnX1cxUn28nkgpE5/S2hWzMTcT1fPq5WK+YUosdL3Jbh2jRDT7J2THzxQaufg6allHOlLoa5vxOnV8bgOka7vuhN6ZCPfTG2kbwafKEUQuVuFPaGD9ZAgMBAAGjKDAmMAwGA1UdEwEB/wQCMAAwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwMwDQYJKoZIhvcNAQELBQADggEBAJv9itwxkISfPOsjqn488+FORmJfAjzzitzRx7rHTJI68mneDGK3BqOSC1CeMvHLKOP4ogYZ4iwXOqURESp4OMPje8C0ceDb9gif1YsGXxscldMvRw9GfNIqOInmVCSxaJyIOyj/5+KiKa0eWzh5eVW0Q8aLxpe40SfEm3SdkKXY+2/GwNM72zVpWHDW0rLAld2epyXPyNQo0hNeLtQqKnnYcZm3pX4NicY/LGJZE+Zk815FkyWjNGFt5sJzOGxEEOzvNoUE9xfeetrz3ORz+NnOawVx/DN60SALcV0nQWpr4wEynhRIrr0qjswmpu/GGsNDK4uLdToEuA+WlfzQ6qI=</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>
