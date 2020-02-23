@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29728.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfData", "WpfData\WpfData.csproj", "{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|ARM = Debug|ARM
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		WpfData_Release|Any CPU = WpfData_Release|Any CPU
+		WpfData_Release|ARM = WpfData_Release|ARM
+		WpfData_Release|ARM64 = WpfData_Release|ARM64
+		WpfData_Release|x64 = WpfData_Release|x64
+		WpfData_Release|x86 = WpfData_Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.Debug|ARM.Build.0 = Debug|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.Debug|x64.Build.0 = Debug|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.Debug|x86.Build.0 = Debug|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.WpfData_Release|Any CPU.ActiveCfg = WpfData_Release|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.WpfData_Release|Any CPU.Build.0 = WpfData_Release|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.WpfData_Release|ARM.ActiveCfg = WpfData_Release|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.WpfData_Release|ARM.Build.0 = WpfData_Release|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.WpfData_Release|ARM64.ActiveCfg = WpfData_Release|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.WpfData_Release|ARM64.Build.0 = WpfData_Release|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.WpfData_Release|x64.ActiveCfg = WpfData_Release|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.WpfData_Release|x64.Build.0 = WpfData_Release|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.WpfData_Release|x86.ActiveCfg = WpfData_Release|Any CPU
+		{A8D5D1F3-02FE-40E4-87B9-6EE5E8652E68}.WpfData_Release|x86.Build.0 = WpfData_Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {38F6D637-BE86-4BEB-8849-C8AB5025AE29}
+	EndGlobalSection
+EndGlobal

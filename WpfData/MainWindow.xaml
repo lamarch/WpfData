@@ -1,0 +1,71 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfData"
+        xmlns:Properties="clr-namespace:WpfData.Properties" x:Class="WpfData.MainWindow"
+            xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+        mc:Ignorable="d"
+        Title="Consommation des données mensuelles" SizeToContent="WidthAndHeight" ResizeMode="NoResize" WindowStyle="ToolWindow" Icon="Resources\icon.ico">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Header="Général :" Grid.Row="0" BorderBrush="Black" >
+            <Grid Height="167">
+                <Label x:Name="lblData" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Chargement..." HorizontalAlignment="Left" Margin="10,10,0,0" Height="59" Width="429" FontSize="35" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+                <ProgressBar x:Name="prgData" HorizontalAlignment="Left" Height="26" Margin="10,74,0,0" VerticalAlignment="Top" Width="429" Grid.ColumnSpan="2"/>
+                <Label Content="Connexion réseau :" HorizontalAlignment="Left" Margin="10,105,0,0" VerticalAlignment="Top" Width="113"/>
+                <Label x:Name="lblDataPercents" Content="Chargement..." HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,74,0,0" VerticalAlignment="Top" Width="429" Grid.ColumnSpan="2"/>
+                <Label x:Name="lblNetworkStatus" Content="Chargement..." HorizontalAlignment="Left" Margin="123,105,-1,0" VerticalAlignment="Top" Width="317"/>
+                <Label x:Name="lblNetUsage" Content="Chargement..." HorizontalAlignment="Left" Margin="0,136,0,0" VerticalAlignment="Top" Width="439" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="26"/>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="Précisions :" Grid.Row="1" BorderBrush="Black" >
+            <Grid Height="160">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+
+
+                </Grid.RowDefinitions>
+
+                <Rectangle Grid.Row="0" Grid.RowSpan="2" Margin="3" Fill="LightGray" Stroke="Black"/>
+                <Rectangle Grid.Row="2" Grid.RowSpan="2" Margin="3" Fill="LightGray" Stroke="Black"/>
+
+
+                <Label Grid.Row="0" Content="Telechargement : " HorizontalAlignment="Left" Margin="10,6,0,4" FontWeight="Normal"/>
+                <Label Grid.Row="0" x:Name="lblDataDown" Content="Chargement..." HorizontalAlignment="Left" Margin="118,6,0,0" VerticalAlignment="Top" Width="110" FontWeight="Normal" Height="30"/>
+                <Label Grid.Row="0" x:Name="lblDataDownRate" Content="Chargement..." HorizontalAlignment="Left" Margin="329,6,0,0" VerticalAlignment="Top" Width="110" FontWeight="Normal" Height="30"/>
+                <Label Grid.Row="1" Content="Envoi : " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="103" FontWeight="Normal"/>
+                <Label Grid.Row="1" x:Name="lblDataUp" Content="Chargement..." HorizontalAlignment="Left" Margin="118,10,0,0" VerticalAlignment="Top" Width="110" FontWeight="Normal"/>
+                <Label Grid.Row="1" x:Name="lblDataUpRate" Content="Chargement..." HorizontalAlignment="Left" Margin="329,10,0,0" VerticalAlignment="Top" Width="110" FontWeight="Normal"/>
+                <Label Background="White" BorderBrush="Black" BorderThickness="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Trafic :" HorizontalAlignment="Left" Margin="233,24,0,0" VerticalAlignment="Top" FontWeight="Normal" Width="91" Height="31" Grid.RowSpan="2"/>
+
+                <Label Grid.Row="2" Content="Données disponible par jour par mois :" Margin="5,9,231,1" />
+                <Label Grid.Row="2" x:Name="lblDataPerDayStart" Content="Chargement..." HorizontalAlignment="Left" Margin="329,9,0,0" VerticalAlignment="Top" Width="112" />
+                <Label Grid.Row="3" x:Name="lblDataPerDayRemain" Content="Chargement..." HorizontalAlignment="Left" Margin="329,5,0,0" VerticalAlignment="Top" Width="112" Height="31" />
+                <Label Grid.Row="3" Content="Données disponible par jour jusqu'à la fin du mois :" Margin="5,5,145,4" />
+
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="Paramètres :" Grid.Row="3" BorderBrush="Black" >
+            <Grid Height="36">
+                <Label Visibility="Hidden" Content="secondes" HorizontalAlignment="Left" Margin="319,177,0,0" VerticalAlignment="Top"/>
+                <CheckBox IsChecked="False"  x:Name="ckbOver" Click="ckbOver_Click" Content="Toujours au dessus des autres" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" ClickMode="Press"/>
+                <Button x:Name="btShowGraphs" Click="btShowGraphs_Click" Content="Voir les graphiques" HorizontalAlignment="Left" Margin="295,10,0,0" VerticalAlignment="Top" Width="144"/>
+                <Button x:Name="btShowLogs" Click="btShowLogs_Click" Content="Logs" HorizontalAlignment="Left" Margin="197,10,0,0" VerticalAlignment="Top" Width="88"/>
+
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>

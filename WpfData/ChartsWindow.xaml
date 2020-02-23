@@ -1,0 +1,36 @@
+﻿<Window x:Class="WpfData.ChartsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfData"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.wpf"
+        mc:Ignorable="d"
+        Title="ChartsWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <lvc:CartesianChart Grid.Row="0" x:Name="chrtRates" Margin="10" Series="{Binding dataRateCollection}"
+                            DisableAnimations="False" AnimationsSpeed="0:0:0:0.3" Hoverable="True" DataTooltip="{x:Null}" LegendLocation="Bottom" Zoom="X">
+            <lvc:CartesianChart.AxisX>
+                <lvc:Axis Title="Temps" LabelFormatter="{Binding labelFormatterRate_X}" MaxValue="{Binding AxisXMax}" MinValue="{Binding AxisXMin}" Unit="{Binding AxisXUnit}">
+                    <lvc:Axis.Separator>
+                        <lvc:Separator Step="{Binding AxisXStep}" IsEnabled="True"/>
+                    </lvc:Axis.Separator>
+                </lvc:Axis>
+            </lvc:CartesianChart.AxisX>
+            <lvc:CartesianChart.AxisY>
+                <lvc:Axis Title="Données" MinValue="{Binding AxisYMin}" LabelFormatter="{Binding labelFormatterRate_Y}">
+                    <lvc:Axis.Sections>
+                        <lvc:AxisSection Value="0" SectionWidth="1000000" Label="OK" >
+                            <lvc:AxisSection.Fill>
+                                <SolidColorBrush Color="Green" Opacity=".1"/>
+                            </lvc:AxisSection.Fill>
+                        </lvc:AxisSection>
+                    </lvc:Axis.Sections>
+                </lvc:Axis>
+            </lvc:CartesianChart.AxisY>
+        </lvc:CartesianChart>
+    </Grid>
+</Window>
