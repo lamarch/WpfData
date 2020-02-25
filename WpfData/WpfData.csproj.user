@@ -2,9 +2,9 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <PublishUrlHistory>C:\Users\Xavier\source\repos\WpfData\WpfData\publish\|publish\</PublishUrlHistory>
-    <InstallUrlHistory>https://raw.githubusercontent.com/p0lohx/WpfData/blob/master/WpfData/publish/|https://github.com/p0lohx/WpfData/blob/master/WpfData/publish/</InstallUrlHistory>
+    <InstallUrlHistory>\\PM54\Users\Xavier\source\repos\WpfData\WpfData\publish\setup.exe\|https://raw.githubusercontent.com/p0lohx/WpfData/blob/master/WpfData/publish/|https://github.com/p0lohx/WpfData/blob/master/WpfData/publish/</InstallUrlHistory>
     <SupportUrlHistory />
-    <UpdateUrlHistory />
+    <UpdateUrlHistory>\\PM54\WpfData-Publish\|\\PM54\Users\Xavier\source\repos\WpfData\WpfData\publish\</UpdateUrlHistory>
     <BootstrapperUrlHistory />
     <ErrorReportUrlHistory />
     <FallbackCulture>fr-FR</FallbackCulture>

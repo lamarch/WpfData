@@ -1,7 +1,6 @@
 C:\Users\Xavier\source\repos\WpfData\WpfData\bin\Debug\WpfData.exe.config
 C:\Users\Xavier\source\repos\WpfData\WpfData\bin\Debug\WpfData.exe
 C:\Users\Xavier\source\repos\WpfData\WpfData\bin\Debug\WpfData.pdb
-C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\WpfData.csprojAssemblyReference.cache
 C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\MainWindow.g.cs
 C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\App.g.cs
 C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\WpfData_MarkupCompile.cache
@@ -18,10 +17,14 @@ C:\Users\Xavier\source\repos\WpfData\WpfData\bin\Debug\LiveCharts.pdb
 C:\Users\Xavier\source\repos\WpfData\WpfData\bin\Debug\LiveCharts.xml
 C:\Users\Xavier\source\repos\WpfData\WpfData\bin\Debug\LiveCharts.Wpf.pdb
 C:\Users\Xavier\source\repos\WpfData\WpfData\bin\Debug\LiveCharts.Wpf.xml
-C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\ChartsWindow.g.cs
-C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\ChartsWindow.baml
 C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\WpfData.csproj.CopyComplete
 C:\Users\Xavier\source\repos\WpfData\WpfData\bin\Debug\WpfData.exe.manifest
 C:\Users\Xavier\source\repos\WpfData\WpfData\bin\Debug\WpfData.application
 C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\WpfData.exe.manifest
 C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\WpfData.application
+C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\Windows\ChartsWindow.g.cs
+C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\UserControls\GeneralStatusUC.g.cs
+C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\Windows\ChartsWindow.baml
+C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\UserControls\GeneralStatusUC.baml
+C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\WpfData.csprojAssemblyReference.cache

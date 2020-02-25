@@ -7,7 +7,7 @@
         xmlns:Properties="clr-namespace:WpfData.Properties" x:Class="WpfData.MainWindow"
             xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         mc:Ignorable="d"
-        Title="Consommation des données mensuelles" SizeToContent="WidthAndHeight" ResizeMode="NoResize" WindowStyle="ToolWindow" Icon="Resources\icon.ico">
+        Title="Consommation des données mensuelles" SizeToContent="WidthAndHeight" ResizeMode="NoResize" WindowStyle="ToolWindow" Icon="Resources\icon_png.png">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -15,17 +15,13 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
 
-        <GroupBox Header="Général :" Grid.Row="0" BorderBrush="Black" >
-            <Grid Height="167">
-                <Label x:Name="lblData" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Chargement..." HorizontalAlignment="Left" Margin="10,10,0,0" Height="59" Width="429" FontSize="35" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
-                <ProgressBar x:Name="prgData" HorizontalAlignment="Left" Height="26" Margin="10,74,0,0" VerticalAlignment="Top" Width="429" Grid.ColumnSpan="2"/>
-                <Label Content="Connexion réseau :" HorizontalAlignment="Left" Margin="10,105,0,0" VerticalAlignment="Top" Width="113"/>
-                <Label x:Name="lblDataPercents" Content="Chargement..." HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,74,0,0" VerticalAlignment="Top" Width="429" Grid.ColumnSpan="2"/>
-                <Label x:Name="lblNetworkStatus" Content="Chargement..." HorizontalAlignment="Left" Margin="123,105,-1,0" VerticalAlignment="Top" Width="317"/>
-                <Label x:Name="lblNetUsage" Content="Chargement..." HorizontalAlignment="Left" Margin="0,136,0,0" VerticalAlignment="Top" Width="439" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="26"/>
-            </Grid>
-        </GroupBox>
+        <Border Grid.Row="0" >
+            <local:GeneralStatusUC x:Name="generalStatusUC" />
+        </Border>
 
         <GroupBox Header="Précisions :" Grid.Row="1" BorderBrush="Black" >
             <Grid Height="160">
@@ -59,11 +55,12 @@
         </GroupBox>
 
         <GroupBox Header="Paramètres :" Grid.Row="3" BorderBrush="Black" >
-            <Grid Height="36">
+            <Grid Height="82">
                 <Label Visibility="Hidden" Content="secondes" HorizontalAlignment="Left" Margin="319,177,0,0" VerticalAlignment="Top"/>
-                <CheckBox IsChecked="False"  x:Name="ckbOver" Click="ckbOver_Click" Content="Toujours au dessus des autres" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" ClickMode="Press"/>
-                <Button x:Name="btShowGraphs" Click="btShowGraphs_Click" Content="Voir les graphiques" HorizontalAlignment="Left" Margin="295,10,0,0" VerticalAlignment="Top" Width="144"/>
-                <Button x:Name="btShowLogs" Click="btShowLogs_Click" Content="Logs" HorizontalAlignment="Left" Margin="197,10,0,0" VerticalAlignment="Top" Width="88"/>
+                <CheckBox IsChecked="False"  x:Name="ckbOver" Click="ckbOver_Click" Content="Toujours au dessus des autres fenêtres" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" ClickMode="Press"/>
+                <Button x:Name="btShowGraphs" Click="btShowGraphs_Click" Content="Voir les graphiques" HorizontalAlignment="Left" Margin="297,10,0,0" VerticalAlignment="Top" Width="144"/>
+                <Button x:Name="btShowLogs" Click="btShowLogs_Click" Content="Voir les logs" HorizontalAlignment="Left" Margin="297,52,0,0" VerticalAlignment="Top" Width="144"/>
+                <Button x:Name="btUpdate" Click="btUpdate_Click" Content="Mise à jour" HorizontalAlignment="Left" Margin="148,52,0,0" VerticalAlignment="Top" Width="144"/>
 
             </Grid>
         </GroupBox>

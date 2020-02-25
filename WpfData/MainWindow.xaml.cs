@@ -1,29 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Deployment.Application;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Xml;
-using System.Xml.XPath;
+
 using LiveCharts;
+
+using WpfData.Util;
 
 namespace WpfData
 {
@@ -32,8 +21,7 @@ namespace WpfData
     /// </summary>
     public partial class MainWindow : Window
     {
-        
-        const string path = @"\\PM54\Users\Xavier\source\repos\WpfData\WpfData\bin\WpfData_Release\WpfData.exe";
+        private const string updatePath = @"\\PM54\Users\Xavier\source\repos\WpfData\WpfData\publish\setup.exe";
 
 
         private readonly Regex regexInputLong = new Regex(@"[\d]+");
@@ -42,182 +30,208 @@ namespace WpfData
         private readonly SolidColorBrush colorHighWarning = new SolidColorBrush(Colors.Red);
         private readonly SolidColorBrush colorNormalBlack = new SolidColorBrush(Colors.Black);
         private readonly SolidColorBrush colorGood = new SolidColorBrush(Colors.Green);
+        public readonly bool IsDebugMode = false;
 
-
-        private readonly Dictionary<string, long> units = new Dictionary<string, long>() { 
-            { "MO", 1024*1024 }, 
+        private readonly Dictionary<string, long> units = new Dictionary<string, long>() {
+            { "MO", 1024*1024 },
             { "GO", 1024*1024*1024 } };
-
-
-        StackFrame callStack = new StackFrame(1, true);
-        DispatcherTimer dispatcher;
-        DataRequester requester;
-        NotifyIcon icon;
-        XmlParser<NetworkDataUsage> xmlParser;
-        Logger logger;
-        System.Windows.Forms.MenuItem menuItem_icon_close;
-
-        ChartValues<NetworkDataUsage> timeUsage = new ChartValues<NetworkDataUsage>();
+        private StackFrame callStack = new StackFrame(1, true);
+        private DispatcherTimer dispatcher;
+        private DataRequester requester;
+        private NotifyIcon icon;
+        private XmlParser<NetworkDataUsage> xmlParser;
+        private Logger logger;
+        private System.Windows.Forms.MenuItem menuItem_icon_close;
+        private ChartValues<NetworkDataUsage> timeUsage = new ChartValues<NetworkDataUsage>();
 
 
         public MainWindow ( )
         {
-            DataContext = this;
-            
-            InitializeComponent();
+
+#if DEBUG
+            this.IsDebugMode = true;
+#endif
 
             //config the log system
-            logger = new Logger();
-            logger.Log("appStart EVENT");
+            this.logger = new Logger();
+            this.logger.Log("EVENT appStart");
+
+
+            //config the window
+            this.InitializeComponent();
+            DataContext = this;
+            Title = "WpfData v_" + AppDataFolder.GetVersion();
+
+
+            //config the data layer (serialization)
+            DataLayer.Init(logger);
+            DataLayer.LoadData();
+
+
             //config the xml parser
-            xmlParser = new XmlParser<NetworkDataUsage>("CurrentMonthDownload", "CurrentMonthUpload", "CurrentDownloadRate", "CurrentUploadRate", "trafficmaxlimit", "StartDay");
+            this.xmlParser = new XmlParser<NetworkDataUsage>("CurrentMonthDownload", "CurrentMonthUpload", "CurrentDownloadRate", "CurrentUploadRate", "trafficmaxlimit", "StartDay");
+
 
             //config the "httpclient"
-            requester = new DataRequester("http://192.168.1.1/api/monitoring/traffic-statistics", "http://192.168.1.1/api/monitoring/start_date", "http://192.168.1.1/api/monitoring/month_statistics");
-            requester.GetReady();
-            
+            this.requester = new DataRequester("http://192.168.1.1/api/monitoring/traffic-statistics", "http://192.168.1.1/api/monitoring/start_date", "http://192.168.1.1/api/monitoring/month_statistics");
+            this.requester.GetReady();
+
+
             //config the timer
-            dispatcher = new DispatcherTimer();
-            dispatcher.Interval = TimeSpan.FromSeconds(1.5f);
-            dispatcher.Tick += this.timerTick;
-            dispatcher.Start();
+            this.dispatcher = new DispatcherTimer();
+            this.dispatcher.Interval = TimeSpan.FromSeconds(1.5f);
+            this.dispatcher.Tick += this.timerTick;
+            this.dispatcher.Start();
+
 
             //config the taskbar icon menu item
-            menuItem_icon_close = new System.Windows.Forms.MenuItem("Fermer l'application", new EventHandler((a, b) => System.Windows.Application.Current.Shutdown()));
+            this.menuItem_icon_close = new System.Windows.Forms.MenuItem("Fermer l'application", new EventHandler((a, b) => System.Windows.Application.Current.Shutdown()));
+
 
             //config the task bar icon
-            icon = new NotifyIcon();
-            icon.Visible = true;
-            icon.Icon = Properties.Resources.icon;
-            icon.Click += this.Icon_Click;
-            icon.ContextMenu = new System.Windows.Forms.ContextMenu(new[] { menuItem_icon_close });
+            this.icon = new NotifyIcon();
+            this.icon.Visible = true;
+            this.icon.Icon = Properties.Resources.icon;
+            this.icon.Click += this.Icon_Click;
+            this.icon.ContextMenu = new System.Windows.Forms.ContextMenu(new[] { this.menuItem_icon_close });
+
 
             //config the shutdown
             System.Windows.Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-            System.Windows.Application.Current.Exit += Application_ApplicationExit;
+            System.Windows.Application.Current.Exit += this.Application_ApplicationExit;
+
+
 
         }
 
+        private bool lastRequestNotReady;
 
-
-
-        private async void timerTick (object sender, EventArgs e)
+        private void timerTick (object sender, EventArgs e)
         {
             NetworkDataUsage data = new NetworkDataUsage();
             Cursor = System.Windows.Input.Cursors.Wait;
-            logger.Log("timerTick EVENT");
-            if ( requester.IsReady() )
+
+
+            if ( this.requester.IsReady() )
             {
-                List<string> responses = requester.Get();
+                //To change the log status
+                if ( this.lastRequestNotReady )
+                {
+                    this.logger.Log("INFO requester.IsReady TRUE_VALUE");
+                }
+
+
+                this.lastRequestNotReady = false;
+
+                List<string> responses = this.requester.Get();
+
 
                 try
                 {
-                    xmlParser.Parse(data, responses.ToArray());
-                }catch(Exception ex)
+                    this.xmlParser.Parse(data, responses.ToArray());
+                }
+                catch ( Exception ex )
                 {
-                    logger.Log("xmlParser.Parse EXCEPTION (" + ex.Message + ")");
-                    SetNetworkStatus("problème formatage/réseau (0x300)", Colors.Red);
+                    this.logger.Log("EXCEPTION xmlParser.Parse (" + ex.Message + ")");
+                    this.generalStatusUC.SetNetworkStatus("problème formatage/réseau (0x300)", Colors.Red);
                     return;
                 }
 
-                if(timeUsage.Count > 300 )
-                {
-                    timeUsage.RemoveAt(0);
-                }
+                this.timeUsage.Add(data);
 
-                timeUsage.Add(data);
-
-                SetWindowTextsData(data);
-                SetNetworkStatus("OK");
+                this.SetWindowTextsData(data);
+                this.generalStatusUC.SetNetworkStatus("OK");
 
             }
             else
             {
-                logger.Log("requester.IsReady FALSE_VALUE");
-                SetNetworkStatus("difficultées réseau rencontrées (0x101)", Colors.Orange);
-                await Task.Delay(100);
-                timerTick(sender, e);
+                //To avoid to many logs at once
+                if ( !lastRequestNotReady )
+                {
+                    this.logger.Log("INFO requester.IsReady() FALSE_VALUE");
+                    this.generalStatusUC.SetNetworkStatus("difficultées réseau rencontrées (0x101)", Colors.Orange);
+                }
+
+                this.lastRequestNotReady = true;
+
                 return;
             }
 
             try
             {
-                requester.GetReady();
+                this.requester.GetReady();
             }
-            catch(Exception ex)
+            catch ( Exception ex )
             {
-                logger.Log("requester.GetReady EXCEPTION (" + ex.Message + ")");
-                SetNetworkStatus("problème connexion réseau (0x100)", Colors.Red);
+                this.logger.Log("EXCEPTION requester.GetReady (" + ex.Message + ")");
+                this.generalStatusUC.SetNetworkStatus("problème connexion réseau (0x100)", Colors.Red);
+
             }
 
             Cursor = System.Windows.Input.Cursors.Arrow;
         }
 
-        private int GetDaysBetween (DateTime start, DateTime stop)
-        {
-            return (int)(stop - start).TotalDays;
-        }
-
-        private void SetWindowTextsData(NetworkDataUsage data)
+        private void SetWindowTextsData (NetworkDataUsage data)
         {
 
-            double percent = Math.Round(data.GetTotal() / data.TrafficMaxLimit * 100, 2);
+            this.generalStatusUC.UpdateTextsData(data);
 
 
-            lblData.Content = $"{data.GetTotal().ToString(false)} / {data.TrafficMaxLimit.ToString()}";
-            lblDataDown.Content = data.CurrentMonthDownload.ToString(3);
-            lblDataUp.Content = data.CurrentMonthUpload.ToString(3);
+            this.lblDataDown.Content = data.CurrentMonthDownload.ToString(3);
+            this.lblDataUp.Content = data.CurrentMonthUpload.ToString(3);
 
-            lblDataDownRate.Content = data.CurrentDownloadRate.ToString(3);
-            lblDataUpRate.Content = data.CurrentUploadRate.ToString(3);
-
-            prgData.Value = percent;
-            lblDataPercents.Content = percent + "%";
+            this.lblDataDownRate.Content = data.CurrentDownloadRate.ToString(3);
+            this.lblDataUpRate.Content = data.CurrentUploadRate.ToString(3);
 
 
             if ( data.CurrentDownloadRate > Octet.FromMega(5) )
             {
-                lblDataDownRate.Foreground = colorHighWarning;
-                lblNetUsage.Content = "Un téléchargement est très certainement en cours !";
+                this.lblDataDownRate.Foreground = this.colorHighWarning;
+                this.generalStatusUC.SetNetworkUse("Un téléchargement est très certainement en cours !");
             }
             else if ( data.CurrentDownloadRate > Octet.FromMega(1) )
             {
-                lblDataDownRate.Foreground = colorWarning;
-                lblNetUsage.Content = "Un téléchargement est très certainement en cours !";
+                this.lblDataDownRate.Foreground = this.colorWarning;
+                this.generalStatusUC.SetNetworkUse("Un téléchargement est très certainement en cours !");
             }
             else
             {
-                lblDataDownRate.Foreground = colorNormalBlack;
-                lblNetUsage.Content = "Utilisation normal du réseau.";
+                this.lblDataDownRate.Foreground = this.colorNormalBlack;
+                this.generalStatusUC.SetNetworkUse("Utilisation normal du réseau.");
             }
 
 
             if ( data.CurrentUploadRate > Octet.FromMega(2) )
             {
-                lblDataUpRate.Foreground = colorHighWarning;
+                this.lblDataUpRate.Foreground = this.colorHighWarning;
             }
             else if ( data.CurrentUploadRate > Octet.FromKilo(500) )
             {
-                lblDataUpRate.Foreground = colorWarning;
+                this.lblDataUpRate.Foreground = this.colorWarning;
             }
             else
             {
-                lblDataUpRate.Foreground = colorNormalBlack;
+                this.lblDataUpRate.Foreground = this.colorNormalBlack;
             }
 
-            SetNotifyIconTextData($"{data.GetTotal().ToString(false)} / {data.TrafficMaxLimit.ToString()} \n({percent}%)");
+            double percent = Math.Round(data.GetTotal() / data.TrafficMaxLimit * 100, 2);
+
+            this.SetNotifyIconTextData($"{data.GetTotal().ToString(false)} / {data.TrafficMaxLimit.ToString()} \n({percent}%)");
 
             if ( percent >= 95 )
             {
-                this.Background = colorHighWarning;
+                Background = this.colorHighWarning;
+                this.generalStatusUC.Background = this.colorHighWarning;
             }
             else if ( percent >= 75 )
             {
-                this.Background = colorWarning;
+                Background = this.colorWarning;
+                this.generalStatusUC.Background = this.colorWarning;
             }
             else
             {
-                this.Background = colorGood;
+                Background = this.colorGood;
+                this.generalStatusUC.Background = this.colorGood;
             }
 
             int daysInMonth = GetDaysBetween(DateTime.Now, DateTime.Now.AddMonths(1));
@@ -226,7 +240,7 @@ namespace WpfData
             DateTime now = DateTime.Now;
             int remainingDays;
 
-            if(now.Day < startDay )
+            if ( now.Day < startDay )
             {
                 remainingDays = startDay - now.Day;
             }
@@ -242,69 +256,42 @@ namespace WpfData
             Octet dataRemainPerDay = (data.TrafficMaxLimit - data.GetTotal()) / remainingDays;
 
 
-            lblDataPerDayStart.Content = dataPerDay.ToString();
+            this.lblDataPerDayStart.Content = dataPerDay.ToString();
 
-            lblDataPerDayRemain.Content = dataRemainPerDay.ToString();
+            this.lblDataPerDayRemain.Content = dataRemainPerDay.ToString();
 
             if ( dataPerDay > dataRemainPerDay )
             {
-                lblDataPerDayRemain.Foreground = colorHighWarning;
+                this.lblDataPerDayRemain.Foreground = this.colorHighWarning;
             }
             else
             {
-                lblDataPerDayRemain.Foreground = colorGood;
+                this.lblDataPerDayRemain.Foreground = this.colorGood;
             }
 
 
+            int GetDaysBetween (DateTime start, DateTime stop) => (int)(stop - start).TotalDays;
+
         }
 
-        private void SetNetworkStatus(string msg, System.Windows.Media.Color? color = null)
-        {
-            lblNetworkStatus.Content = msg;
-            if(color is null )
-            {
-                lblNetworkStatus.Foreground = new SolidColorBrush(Colors.Black);
-            }
-            else
-            {
-                lblNetworkStatus.Foreground = new SolidColorBrush(color.Value);
-            }
-        }
+        private void SetNotifyIconTextData (string msg) => this.icon.Text = "WpfData v_" + AppDataFolder.GetVersion() + "\n" + msg;
 
-        private void SetNotifyIconTextData(string msg)
-        {
-            icon.Text = "WpfData\n" + msg;
-        }
-
-        private void VerifyUpdates ( )
-        {
-            if ( File.Exists(path) )
-            {
-                FileInfo f = new FileInfo(path);
-            }
-        }
-
-
-
-        private void Icon_Click (object sender, EventArgs e) => Show();
+        private void Icon_Click (object sender, EventArgs e) => this.Show();
 
         //Application exit
         private void Application_ApplicationExit (object sender, EventArgs e)
         {
+            DataLayer.SaveData();
             Properties.Settings.Default.Save();
-            logger.Log("ApplicationExit EVENT");
-        }
-
-        private void inbDataPMonth_PreviewTextInput (object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = !regexInputLong.IsMatch(e.Text);
+            this.logger.Log("ApplicationExit EVENT");
+            this.icon.Visible = false;
         }
 
         private void ckbOver_Click (object sender, RoutedEventArgs e)
         {
-            if ( ckbOver.IsChecked.HasValue)
+            if ( this.ckbOver.IsChecked.HasValue )
             {
-                this.Topmost = ckbOver.IsChecked.Value;
+                Topmost = this.ckbOver.IsChecked.Value;
             }
         }
 
@@ -313,19 +300,20 @@ namespace WpfData
         protected override void OnClosing (CancelEventArgs e)
         {
             e.Cancel = true;
-            Hide();
+            this.Hide();
         }
 
         private void btShowGraphs_Click (object sender, RoutedEventArgs e)
         {
             try
             {
-                ChartsWindow chartsWindow = new ChartsWindow(timeUsage);
-                chartsWindow.Topmost = this.Topmost;
+                ChartsWindow chartsWindow = new ChartsWindow(this.timeUsage);
+                chartsWindow.Topmost = Topmost;
                 chartsWindow.Show();
-            }catch(Exception ex )
+            }
+            catch ( Exception ex )
             {
-                logger.Log("graphs EXCEPTION (" + ex + ")");
+                this.logger.Log("graphs EXCEPTION (" + ex + ")");
                 System.Windows.MessageBox.Show("Désolé, une erreur est survenue lors de l'affichage des graphiques. Merci d'en avertir le développeur.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
@@ -333,14 +321,79 @@ namespace WpfData
 
         private void btShowLogs_Click (object sender, RoutedEventArgs e)
         {
-            if ( File.Exists(logger.filePath) )
+            AppDataFolder.AccessFolder();
+            if ( File.Exists(this.logger.filePath) )
             {
-                Process.Start("explorer.exe", "/select,\"" + logger.filePath + "\"");
+                Process.Start("explorer.exe", "/select,\"" + this.logger.filePath + "\"");
             }
             else
             {
                 AppDataFolder.AccessFolder();
                 Process.Start("explorer.exe", "\"" + AppDataFolder.FolderPath + "\"");
+            }
+        }
+
+        private void btUpdate_Click (object sender, RoutedEventArgs e)
+        {
+            this.logger.Log("EVENT update");
+
+            UpdateCheckInfo info = null;
+
+            if ( ApplicationDeployment.IsNetworkDeployed )
+            {
+                ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
+
+                try
+                {
+                    info = ad.CheckForDetailedUpdate();
+                }
+                catch ( DeploymentDownloadException dde )
+                {
+                    this.logger.Log("EXCEPTION update-check-dde  (" + dde + ")");
+
+                    System.Windows.MessageBox.Show("La nouvelle version ne peut être téléchargée pour le moment.\n\nVérifiez votre connexion au server, ou réessayez plus tard");
+                    return;
+                }
+                catch ( InvalidDeploymentException ide )
+                {
+                    this.logger.Log("EXCEPTION update-check-ide  (" + ide + ")");
+
+                    System.Windows.MessageBox.Show("Impossible de vérifier le deploiement ClickOnce, la nouvelle version est corrompue.");
+                    return;
+                }
+                catch ( InvalidOperationException ioe )
+                {
+                    this.logger.Log("EXCEPTION update-check-ioe (" + ioe + ")");
+
+                    System.Windows.MessageBox.Show("Cette aplication ne peut être mise à jour car ce n'est pas un déploiement CkickOnce.");
+                    return;
+                }
+
+                if ( info.UpdateAvailable )
+                {
+                    try
+                    {
+                        ad.Update();
+                        System.Windows.Forms.MessageBox.Show("La mise à jour s'est bien passée !");
+
+                        System.Windows.Forms.Application.Restart();
+                        System.Windows.Application.Current.Shutdown();
+                    }
+                    catch ( Exception ex )
+                    {
+                        this.logger.Log("EXCEPTION update-update  (" + ex + ")");
+                        System.Windows.MessageBox.Show("Une erreur est survenue lors de la mise à jour de l'application.");
+                    }
+                }
+                else
+                {
+                    this.logger.Log("INFO update - LAST VERSION ALREADY INSTALLED");
+                    System.Windows.MessageBox.Show("La dernière version est déjà installée !");
+                }
+            }
+            else
+            {
+                this.logger.Log("INFO update - NOT DEPLOYED APP");
             }
         }
     }
