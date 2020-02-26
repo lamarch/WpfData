@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\Xavier\source\repos\WpfData\WpfData\App.xaml
-3465908432
+4-253395912
 
-17-830303012
+18-1865185522
 18951787920
-Windows\ChartsWindow.xaml;UserControls\GeneralStatusUC.xaml;MainWindow.xaml;
+UserControls\DetailsStatusUC.xaml;Windows\ChartsWindow.xaml;UserControls\GeneralStatusUC.xaml;MainWindow.xaml;
 
 False
 

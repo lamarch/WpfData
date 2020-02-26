@@ -19,39 +19,12 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="0" >
+        <GroupBox Header="Infos générales" Grid.Row="0" BorderBrush="Black">
             <local:GeneralStatusUC x:Name="generalStatusUC" />
-        </Border>
+        </GroupBox>
 
         <GroupBox Header="Précisions :" Grid.Row="1" BorderBrush="Black" >
-            <Grid Height="160">
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-
-
-                </Grid.RowDefinitions>
-
-                <Rectangle Grid.Row="0" Grid.RowSpan="2" Margin="3" Fill="LightGray" Stroke="Black"/>
-                <Rectangle Grid.Row="2" Grid.RowSpan="2" Margin="3" Fill="LightGray" Stroke="Black"/>
-
-
-                <Label Grid.Row="0" Content="Telechargement : " HorizontalAlignment="Left" Margin="10,6,0,4" FontWeight="Normal"/>
-                <Label Grid.Row="0" x:Name="lblDataDown" Content="Chargement..." HorizontalAlignment="Left" Margin="118,6,0,0" VerticalAlignment="Top" Width="110" FontWeight="Normal" Height="30"/>
-                <Label Grid.Row="0" x:Name="lblDataDownRate" Content="Chargement..." HorizontalAlignment="Left" Margin="329,6,0,0" VerticalAlignment="Top" Width="110" FontWeight="Normal" Height="30"/>
-                <Label Grid.Row="1" Content="Envoi : " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="103" FontWeight="Normal"/>
-                <Label Grid.Row="1" x:Name="lblDataUp" Content="Chargement..." HorizontalAlignment="Left" Margin="118,10,0,0" VerticalAlignment="Top" Width="110" FontWeight="Normal"/>
-                <Label Grid.Row="1" x:Name="lblDataUpRate" Content="Chargement..." HorizontalAlignment="Left" Margin="329,10,0,0" VerticalAlignment="Top" Width="110" FontWeight="Normal"/>
-                <Label Background="White" BorderBrush="Black" BorderThickness="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Trafic :" HorizontalAlignment="Left" Margin="233,24,0,0" VerticalAlignment="Top" FontWeight="Normal" Width="91" Height="31" Grid.RowSpan="2"/>
-
-                <Label Grid.Row="2" Content="Données disponible par jour par mois :" Margin="5,9,231,1" />
-                <Label Grid.Row="2" x:Name="lblDataPerDayStart" Content="Chargement..." HorizontalAlignment="Left" Margin="329,9,0,0" VerticalAlignment="Top" Width="112" />
-                <Label Grid.Row="3" x:Name="lblDataPerDayRemain" Content="Chargement..." HorizontalAlignment="Left" Margin="329,5,0,0" VerticalAlignment="Top" Width="112" Height="31" />
-                <Label Grid.Row="3" Content="Données disponible par jour jusqu'à la fin du mois :" Margin="5,5,145,4" />
-
-            </Grid>
+            <local:DetailsStatusUC x:Name="detailsStatusUC"/>
         </GroupBox>
 
         <GroupBox Header="Paramètres :" Grid.Row="3" BorderBrush="Black" >

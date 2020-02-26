@@ -78,6 +78,11 @@ namespace WpfData
             return a.GetOctets() > b.GetOctets();
         }
 
+        public static implicit operator string(Octet a)
+        {
+            return a.ToString();
+        }
+
         public static Octet FromOctet (long octet) => new Octet(octet);
         public static Octet FromKilo (long kilo) => Octet.FromOctet(kilo * coef);
         public static Octet FromMega (long mega) => Octet.FromKilo(mega * coef);

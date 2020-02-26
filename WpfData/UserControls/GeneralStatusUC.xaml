@@ -4,10 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WpfData"
-             mc:Ignorable="d" 
-             d:DesignHeight="250" d:DesignWidth="400">
+             mc:Ignorable="d" >
     <Grid >
-        <GroupBox FontSize="15" Header="Infos générales :" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="Black">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="75"/>
@@ -47,6 +45,5 @@
                     <TextBlock FontSize="15" x:Name="tbNetUse" Grid.Row="1" Grid.Column="1" Text="Chargement..." HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
             </Grid>
-        </GroupBox>
     </Grid>
 </UserControl>

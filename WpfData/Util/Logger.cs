@@ -11,30 +11,38 @@ namespace WpfData
     class Logger
     {
 
-        const string folderName = "logs";
-        string fileName;
+        private const string folderName = "logs";
+        private static readonly string subFolderName = AppDataFolder.GetVersion();
 
-        public string filePath;
+        public readonly string fileName;
+        public readonly string filePath;
         
         public Logger ( )
         {
-            fileName = "LOG (v " + AppDataFolder.GetVersion() + ") " + DateTime.Now.ToShortDateString().Replace("/", "-") + "_" + DateTime.Now.ToShortTimeString().Replace(':', '-') + ".txt";
-            filePath = AppDataFolder.GetPath(Path.Combine(folderName, fileName));
+            fileName = $"LOG (v_{AppDataFolder.GetVersion()}) {DateTime.Now.ToString("G").Replace(':', '-').Replace("/", "-")}.txt";
 
-            AppDataFolder.Views.Add(new Util.FolderView(folderName, null));
+            filePath = AppDataFolder.GetPath(Path.Combine(folderName, subFolderName, fileName));
+
+            AppDataFolder.Views.Add(new Util.FolderView(folderName, new Util.FolderView(subFolderName, null)));
         }
 
-        public void Log(string msg)
-        {
-            AppDataFolder.AccessFolder();
-            File.AppendAllText(filePath, DateTime.Now.ToLongTimeString() + " :\t" + msg + "\n\n");
-        }
-
-        public void Test (LogType t, LogLevel l, string name, string message, [CallerMemberName] string caller = null, [CallerLineNumber] int line = -1)
+        public void Log (LogType t, LogLevel l, string name, object message = null, [CallerMemberName] string caller = "Unknown", [CallerLineNumber] int line = -1)
         {
             AppDataFolder.AccessFolder();
 
-            string final = $"{l} / {t} [{caller} at {line}], {name.ToUpperInvariant()} : {message}";
+
+
+            string finalMessage = "None";
+            finalMessage = message?.ToString();
+
+            string final = $"{DateTime.Now.ToString()}{l}\t/ {t} [{caller} at {line}], {name.ToUpperInvariant()} : {finalMessage}\n\n";
+
+            File.AppendAllText(filePath, final);
+        }
+
+        public void LogException(string name, Exception ex, [CallerMemberName] string caller = "Unknown", [CallerLineNumber] int line = -1)
+        {
+            Log(LogType.Exception, LogLevel.Error, name, ex, caller, line);
         }
 
         public enum LogType

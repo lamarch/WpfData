@@ -38,8 +38,6 @@ namespace WpfData
 
             chartValues.CollectionChanged += (a, b) =>
             {
-                if ( chartValues.Count >= 800 )
-                    chartValues.RemoveAt(0);
                 SetAxisLimit(DateTime.Now);
             };
 
@@ -149,7 +147,7 @@ namespace WpfData
         {
             
             AxisXMax = time.Ticks + TimeSpan.FromSeconds(5).Ticks;
-            AxisXMin = time.Ticks - TimeSpan.FromMinutes(5).Ticks;
+            AxisXMin = time.Ticks - TimeSpan.FromMinutes(2.5).Ticks;
         }
         
         public double AxisXStep { get; set; }

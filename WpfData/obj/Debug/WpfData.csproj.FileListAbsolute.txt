@@ -28,3 +28,5 @@ C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\GeneratedInternalTypeHelp
 C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\Windows\ChartsWindow.baml
 C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\UserControls\GeneralStatusUC.baml
 C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\WpfData.csprojAssemblyReference.cache
+C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\UserControls\DetailsStatusUC.g.cs
+C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\UserControls\DetailsStatusUC.baml

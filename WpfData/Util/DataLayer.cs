@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Windows.Data;
 using System.Windows.Forms;
 
 namespace WpfData.Util
@@ -12,10 +13,10 @@ namespace WpfData.Util
         private static Logger logger;
         public static void Init ( Logger _logger )
         {
-            logger = _logger;
-            logger.Log("DataLayer.Init() EVENT");
-
             isInit = true;
+            logger = _logger;
+            logger.Log(Logger.LogType.Event, Logger.LogLevel.Info, "static:DataLayer.Init()", "Call");
+
             AppDataFolder.Views.Add(new FolderView("data", new FolderView("monthly")));
             monthlyData = new DataSerializer<MonthlyData>(AppDataFolder.GetPath(@"data\monthly\.measures"));
             monthlyData.Set(new MonthlyData()
@@ -39,10 +40,10 @@ namespace WpfData.Util
 
         public static async void LoadData ( )
         {
-            logger.Log("DataLayer.LoadData() EVENT");
+            logger.Log(Logger.LogType.Event, Logger.LogLevel.Info, "static,async:DataLayer.LoadData()", "Call");
             if ( !isInit )
             {
-                logger.Log("DataLayer.LoadData() - isInit EXCEPTION (uninitilized)");
+                logger.LogException("isInit", new ValueUnavailableException("false"));
                 throw new InvalidOperationException("Init method not called !");
             }
 
@@ -52,17 +53,18 @@ namespace WpfData.Util
                 await monthlyData.Load();
             }catch(Exception ex)
             {
-                logger.Log("DataLayer.LoadData() - Load EXCEPTION (" + ex + ")");
+                logger.LogException("static,await:monthlyData.Load()", ex);
                 MessageBox.Show("Une erreur est survenue lors du chargement des données, contactez le dev.");
             }
 }
 
         public static async void SaveData ( )
         {
-            logger.Log("DataLayer.SaveData() EVENT");
+            logger.Log(Logger.LogType.Event, Logger.LogLevel.Info, "static,async:DataLayer.SaveData()", "Call");
+
             if ( !isInit )
             {
-                logger.Log("DataLayer.SaveData() - isInit EXCEPTION (uninitilized)");
+                logger.LogException("isInit", new ValueUnavailableException("false"));
                 throw new InvalidOperationException("Init method not called !");
             }
 
@@ -72,7 +74,7 @@ namespace WpfData.Util
                 await monthlyData.Save();
             }catch(Exception ex )
             {
-                logger.Log("DataLayer.SaveData() - Save EXCEPTION (" + ex + ")");
+                logger.LogException("static,await:monthlyData.Save()", ex);
                 MessageBox.Show("Une erreur est survenue lors de la sauvegarde des données, contactez le dev.");
             }
         }

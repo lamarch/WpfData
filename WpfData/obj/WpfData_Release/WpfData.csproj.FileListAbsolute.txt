@@ -26,3 +26,5 @@ C:\Users\Xavier\source\repos\WpfData\WpfData\obj\WpfData_Release\UserControls\Ge
 C:\Users\Xavier\source\repos\WpfData\WpfData\obj\WpfData_Release\MainWindow.g.cs
 C:\Users\Xavier\source\repos\WpfData\WpfData\obj\WpfData_Release\MainWindow.baml
 C:\Users\Xavier\source\repos\WpfData\WpfData\obj\WpfData_Release\WpfData.csprojAssemblyReference.cache
+C:\Users\Xavier\source\repos\WpfData\WpfData\obj\WpfData_Release\UserControls\detailsStatusUC.g.cs
+C:\Users\Xavier\source\repos\WpfData\WpfData\obj\WpfData_Release\UserControls\detailsStatusUC.baml

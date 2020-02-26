@@ -33,6 +33,15 @@ namespace WpfData
             double percents = Math.Round(data.GetTotal() / data.TrafficMaxLimit * 100, 4);
             tbPercents.Text = $"{percents} %";
             progressBar.Value = percents;
+            
+            if ( data.CurrentDownloadRate > Octet.FromMega(1) )
+            {
+                tbNetUse.Text = "Un téléchargement est certainement en cours !";
+            }
+            else
+            {
+                tbNetUse.Text = "Utilisation normale de la bande passante.";
+            }
         }
 
         public void SetNetworkStatus(string msg, System.Windows.Media.Color? color = null)
@@ -46,11 +55,6 @@ namespace WpfData
             {
                 tbNetStatus.Foreground = new SolidColorBrush(color.Value);
             }
-        }
-
-        public void SetNetworkUse(string msg)
-        {
-            tbNetUse.Text = msg;
         }
     }
 }
