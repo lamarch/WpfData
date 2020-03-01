@@ -3,9 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfData"
-        xmlns:Properties="clr-namespace:WpfData.Properties" x:Class="WpfData.MainWindow"
-            xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+        xmlns:UserControls="clr-namespace:WpfData.UserControls"
+        x:Class="WpfData.Windows.MainWindow"
         mc:Ignorable="d"
         Title="Consommation des données mensuelles" SizeToContent="WidthAndHeight" ResizeMode="NoResize" WindowStyle="ToolWindow" Icon="Resources\icon_png.png">
     <Grid>
@@ -20,20 +19,20 @@
         </Grid.ColumnDefinitions>
 
         <GroupBox Header="Infos générales" Grid.Row="0" BorderBrush="Black">
-            <local:GeneralStatusUC x:Name="generalStatusUC" />
+            <UserControls:GeneralStatusUC x:Name="generalStatusUC" />
         </GroupBox>
 
         <GroupBox Header="Précisions :" Grid.Row="1" BorderBrush="Black" >
-            <local:DetailsStatusUC x:Name="detailsStatusUC"/>
+            <UserControls:DetailsStatusUC x:Name="detailsStatusUC"/>
         </GroupBox>
 
         <GroupBox Header="Paramètres :" Grid.Row="3" BorderBrush="Black" >
-            <Grid Height="82">
+            <Grid Height="69">
                 <Label Visibility="Hidden" Content="secondes" HorizontalAlignment="Left" Margin="319,177,0,0" VerticalAlignment="Top"/>
                 <CheckBox IsChecked="False"  x:Name="ckbOver" Click="ckbOver_Click" Content="Toujours au dessus des autres fenêtres" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" ClickMode="Press"/>
-                <Button x:Name="btShowGraphs" Click="btShowGraphs_Click" Content="Voir les graphiques" HorizontalAlignment="Left" Margin="297,10,0,0" VerticalAlignment="Top" Width="144"/>
-                <Button x:Name="btShowLogs" Click="btShowLogs_Click" Content="Voir les logs" HorizontalAlignment="Left" Margin="297,52,0,0" VerticalAlignment="Top" Width="144"/>
-                <Button x:Name="btUpdate" Click="btUpdate_Click" Content="Mise à jour" HorizontalAlignment="Left" Margin="148,52,0,0" VerticalAlignment="Top" Width="144"/>
+                <Button x:Name="btShowGraphs" IsEnabled="False" Click="btShowGraphs_Click" Content="Voir les graphiques" HorizontalAlignment="Left" Margin="441,37,0,0" VerticalAlignment="Top" Width="144"/>
+                <Button x:Name="btShowLogs" Click="btShowLogs_Click" Content="Voir les logs" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Width="144"/>
+                <Button x:Name="btUpdate" Click="btUpdate_Click" Content="Mise à jour" HorizontalAlignment="Left" Margin="234,37,0,0" VerticalAlignment="Top" Width="144"/>
 
             </Grid>
         </GroupBox>

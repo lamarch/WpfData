@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Threading;
+
+using WpfData.Util;
 
 namespace WpfData
 {
@@ -15,6 +14,24 @@ namespace WpfData
     /// </summary>
     public partial class App : Application
     {
+
+        internal const string updatePath = @"\\PM54\Users\Xavier\source\repos\WpfData\WpfData\publish\setup.exe";
+        internal const double maxDataRecordMinutes = 30d;
+
+#if DEBUG
+        internal const bool IsDebugMode = true;
+#else
+        internal const bool IsDebugMode = false;
+#endif
+
+        internal static readonly SolidColorBrush colorNormalWhite = new SolidColorBrush(Colors.White);
+        internal static readonly SolidColorBrush colorWarning = new SolidColorBrush(Colors.Orange);
+        internal static readonly SolidColorBrush colorHighWarning = new SolidColorBrush(Colors.Red);
+        internal static readonly SolidColorBrush colorNormalBlack = new SolidColorBrush(Colors.Black);
+        internal static readonly SolidColorBrush colorGood = new SolidColorBrush(Colors.Green);
+        internal static string AppName = "WpfData v_" + AppDataFolder.GetVersion();
+
+
         protected override void OnStartup (StartupEventArgs e)
         {
             base.OnStartup(e);

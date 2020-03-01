@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="WpfData.DetailsStatusUC"
+﻿<UserControl x:Class="WpfData.UserControls.DetailsStatusUC"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -15,6 +15,8 @@
         <Style x:Key="ColHeaders" BasedOn="{StaticResource Headers}" TargetType="TextBlock">
             <Setter Property="TextBlock.Padding" Value="10"/>
             <Setter Property="TextBlock.Background" Value="LightGray"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style x:Key="ValueTBs" TargetType="TextBlock">
             <Setter Property="TextBlock.HorizontalAlignment" Value="Center"/>
@@ -26,6 +28,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
+            <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
@@ -41,9 +44,9 @@
                 <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="100"/>
-                <RowDefinition Height="100"/>
-                <RowDefinition Height="100"/>
+                <RowDefinition Height="75"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" Fill="LightGray" Stroke="Black"/>
@@ -69,12 +72,14 @@
 
         </Grid>
 
-        <Rectangle Grid.Row="2" Grid.RowSpan="2" Margin="3" Fill="LightGray" Stroke="Black"/>
+        <Rectangle Grid.Row="2" Grid.RowSpan="3" Margin="3" Fill="LightGray" Stroke="Black"/>
 
         <Label Grid.Row="2" Content="Données disponible par jour par mois :" Margin="5,9,231,1" />
         <Label Grid.Row="2" x:Name="lblDataPerDayStart" Content="Chargement..." HorizontalAlignment="Left" Margin="329,9,0,0" VerticalAlignment="Top" Width="112" />
         <Label Grid.Row="3" Content="Données disponible par jour jusqu'à la fin du mois :" Margin="5,5,145,4" />
         <Label Grid.Row="3" x:Name="lblDataPerDayRemain" Content="Chargement..." HorizontalAlignment="Left" Margin="329,5,0,0" VerticalAlignment="Top" Width="112" Height="31" />
+        <Label Grid.Row="4" Content="Jour de réinitialisation :" Margin="5,5,145,4" />
+        <Label Grid.Row="4" x:Name="lblStartDay" Content="Chargement..." HorizontalAlignment="Left" Margin="329,5,0,0" VerticalAlignment="Top" Width="112" Height="31" />
 
 
     </Grid>

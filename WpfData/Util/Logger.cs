@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace WpfData
+namespace WpfData.Util
 {
-    class Logger
+    internal class Logger
     {
 
         private const string folderName = "logs";
@@ -16,7 +12,7 @@ namespace WpfData
 
         public readonly string fileName;
         public readonly string filePath;
-        
+
         public Logger ( )
         {
             fileName = $"LOG (v_{AppDataFolder.GetVersion()}) {DateTime.Now.ToString("G").Replace(':', '-').Replace("/", "-")}.txt";
@@ -35,15 +31,12 @@ namespace WpfData
             string finalMessage = "None";
             finalMessage = message?.ToString();
 
-            string final = $"{DateTime.Now.ToString()}{l}\t/ {t} [{caller} at {line}], {name.ToUpperInvariant()} : {finalMessage}\n\n";
+            string final = $"{DateTime.Now.ToString()}\t{l} / {t} [{caller} at {line}], {name.ToUpperInvariant()} : {finalMessage}\n\n";
 
             File.AppendAllText(filePath, final);
         }
 
-        public void LogException(string name, Exception ex, [CallerMemberName] string caller = "Unknown", [CallerLineNumber] int line = -1)
-        {
-            Log(LogType.Exception, LogLevel.Error, name, ex, caller, line);
-        }
+        public void LogException (string name, Exception ex, [CallerMemberName] string caller = "Unknown", [CallerLineNumber] int line = -1) => Log(LogType.Exception, LogLevel.Error, name, ex, caller, line);
 
         public enum LogType
         {

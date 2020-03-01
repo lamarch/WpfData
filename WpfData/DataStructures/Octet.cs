@@ -1,13 +1,12 @@
-﻿using System.CodeDom;
-using System.Runtime.CompilerServices;
+﻿using System;
 
-namespace WpfData
+namespace WpfData.DataStructures
 {
+    [Serializable]
     public class Octet
     {
-        const long coef = 1024;
-
-        static readonly string[] suffixes = new[]
+        private const long coef = 1024;
+        private static readonly string[] suffixes = new[]
         {
             "B",
             "KB",
@@ -16,9 +15,10 @@ namespace WpfData
             "TB"
         };
 
-        long octets;
 
-        Octet(long octets)
+        private long octets;
+
+        private Octet (long octets)
         {
             this.octets = octets;
         }
@@ -28,7 +28,8 @@ namespace WpfData
             this.octets = 0;
         }
 
-        public static Octet operator + ( Octet a, Octet b )
+        #region Operator Overloads
+        public static Octet operator + (Octet a, Octet b)
         {
             return Octet.FromOctet(a.GetOctets() + b.GetOctets());
         }
@@ -78,10 +79,14 @@ namespace WpfData
             return a.GetOctets() > b.GetOctets();
         }
 
-        public static implicit operator string(Octet a)
+        public static implicit operator string (Octet a)
         {
             return a.ToString();
         }
+
+        #endregion
+
+        #region Conversions
 
         public static Octet FromOctet (long octet) => new Octet(octet);
         public static Octet FromKilo (long kilo) => Octet.FromOctet(kilo * coef);
@@ -98,23 +103,25 @@ namespace WpfData
         public override string ToString ( ) => ToString(2, true);
 
         public string ToString (bool suffixe) => ToString(2, suffixe);
-        public string ToString ( int decimalCount, bool suffixe = true )
+        public string ToString (int decimalCount, bool suffixe = true)
         {
-            decimal octets = (decimal)this.octets;
-            decimal dCoef = (decimal)coef;
-            if(octets < 0 )
+            decimal octets = this.octets;
+            decimal dCoef = coef;
+            if ( octets < 0 )
             {
                 return "- " + FromOctet((long)-octets).ToString();
             }
 
             int index = 0;
-            while(octets >= dCoef )
+            while ( octets >= dCoef )
             {
-                octets /= (decimal)dCoef;
+                octets /= dCoef;
                 index++;
             }
 
             return string.Format("{0:n" + decimalCount + "} {1}", octets, suffixes[index]);
         }
+
+        #endregion
     }
 }

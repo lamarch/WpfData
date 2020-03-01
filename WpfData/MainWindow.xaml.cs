@@ -1,95 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Deployment.Application;
 using System.Diagnostics;
 using System.IO;
-using System.Text.RegularExpressions;
+using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-using LiveCharts;
-
+using WpfData.DataStructures;
+using WpfData.Requests;
 using WpfData.Util;
 
-namespace WpfData
+namespace WpfData.Windows
 {
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const string updatePath = @"\\PM54\Users\Xavier\source\repos\WpfData\WpfData\publish\setup.exe";
-        private const double maxDataRecordMinutes = 15d;
 
-
-
-        public static readonly SolidColorBrush colorNormalWhite = new SolidColorBrush(Colors.White);
-        public static readonly SolidColorBrush colorWarning = new SolidColorBrush(Colors.Orange);
-        public static readonly SolidColorBrush colorHighWarning = new SolidColorBrush(Colors.Red);
-        public static readonly SolidColorBrush colorNormalBlack = new SolidColorBrush(Colors.Black);
-        public static readonly SolidColorBrush colorGood = new SolidColorBrush(Colors.Green);
-        public static readonly bool IsDebugMode = false;
-        public static string AppName = "WpfData v_" + AppDataFolder.GetVersion();
-
-        private readonly Dictionary<string, long> units = new Dictionary<string, long>() {
-            { "MO", 1024*1024 },
-            { "GO", 1024*1024*1024 } };
-        private StackFrame callStack = new StackFrame(1, true);
         private DispatcherTimer dispatcher;
-        private DataRequester requester;
         private NotifyIcon icon;
-        private XmlParser<NetworkDataUsage> xmlParser;
-        private Logger logger;
         private System.Windows.Forms.MenuItem menuItem_icon_close;
-        private ChartValues<NetworkDataUsage> timeUsage = new ChartValues<NetworkDataUsage>();
 
-        static MainWindow ( )
-        {
-#if DEBUG
-            IsDebugMode = true;
-#endif
-        }
+        private List<NetworkMeasure> rtMeasures;
+        private List<NetworkMeasure> dailyMeasures;
+
+        private RequestParserConfig parserConfig;
+        private RequestParser parser;
+        private Logger logger;
+        private InstanceLocker locker;
 
         public MainWindow ( )
         {
 
 
-
             //config the log system
             this.logger = new Logger();
-            this.logger.Log(Logger.LogType.Event, Logger.LogLevel.Info, "this:MainWindow()", "Call");
-
-
-            //config the window
-            this.InitializeComponent();
-            DataContext = this;
-            Title = AppName;
+            this.logger.Log(Logger.LogType.Event, Logger.LogLevel.Info, "Application start", App.AppName);
 
 
             //config the data layer (serialization)
             DataLayer.Init(logger);
             DataLayer.LoadData();
 
+            dailyMeasures = DataLayer.DailyMeasures ?? new List<NetworkMeasure>();
+            rtMeasures = new List<NetworkMeasure>();
 
-            //config the xml parser
-            this.xmlParser = new XmlParser<NetworkDataUsage>("CurrentMonthDownload", "CurrentMonthUpload", "CurrentDownloadRate", "CurrentUploadRate", "trafficmaxlimit", "StartDay");
+            //TODO: rewrite (one more time) the request system
+            //TODO: write a configurable request system with JSON
+            //config the new parserConfig
+            this.parserConfig = new RequestParserConfig("http://192.168.1.1", new List<RequestParserFile>()
+                {
+                    new RequestParserFile("/api/monitoring/traffic-statistics", ("TotalUpload", NetworkMeasureProperty.TotalUpload), ("TotalDownload", NetworkMeasureProperty.TotalDownload), ("CurrentUploadRate", NetworkMeasureProperty.UploadRate), ("CurrentDownloadRate", NetworkMeasureProperty.DownloadRate)),
+                    new RequestParserFile("/api/monitoring/start_date", ("trafficmaxlimit", NetworkMeasureProperty.TrafficMaxLimit), ("StartDay", NetworkMeasureProperty.StartDay))
+                });
 
 
-            //config the "httpclient"
-            this.requester = new DataRequester("http://192.168.1.1/api/monitoring/traffic-statistics", "http://192.168.1.1/api/monitoring/start_date", "http://192.168.1.1/api/monitoring/month_statistics");
-            this.requester.GetReady();
+            //config the new parser
+            this.parser = new RequestParser(parserConfig);
+            this.parser.Request();
 
 
+            //TODO: rewrite the application on event system (request->show->wait) with Dispatchers
+            //TODO: better binding on UserControls ?
             //config the timer
             this.dispatcher = new DispatcherTimer();
             this.dispatcher.Interval = TimeSpan.FromSeconds(1.5f);
             this.dispatcher.Tick += this.timerTick;
             this.dispatcher.Start();
 
-
+            #region TaskBarIcon
             //config the taskbar icon menu item
             this.menuItem_icon_close = new System.Windows.Forms.MenuItem("Fermer l'application", new EventHandler((a, b) => System.Windows.Application.Current.Shutdown()));
 
@@ -100,19 +86,31 @@ namespace WpfData
             this.icon.Icon = Properties.Resources.icon;
             this.icon.Click += this.Icon_Click;
             this.icon.ContextMenu = new System.Windows.Forms.ContextMenu(new[] { this.menuItem_icon_close });
-
+            #endregion
 
             //config the shutdown
             System.Windows.Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             System.Windows.Application.Current.Exit += this.Application_ApplicationExit;
 
 
-            //config the data list
-            timeUsage.CollectionChanged += (a, b) =>
+            //TODO: recreate the graphs&charts witht @OxyPlot
+            //config the UI
+            this.InitializeComponent();
+            DataContext = this;
+            Title = App.AppName;
+
+
+            //verify the single instance lock
+            locker = new InstanceLocker();
+            if( !App.IsDebugMode )
             {
-                while ( timeUsage.Count > maxDataRecordMinutes * 60 )
-                    timeUsage.RemoveAt(0);
-            };
+                if ( !locker.Check() )
+                {
+                    MsgBox("Impossible d'ouvrir plusieurs instances de cette application !", MessageBoxImage.Warning);
+                    System.Windows.Application.Current.Shutdown();
+                }
+                locker.Lock();
+            }
 
         }
 
@@ -120,47 +118,61 @@ namespace WpfData
 
         private void timerTick (object sender, EventArgs e)
         {
-            NetworkDataUsage data = new NetworkDataUsage();
+            NetworkMeasure data;
             Cursor = System.Windows.Input.Cursors.Wait;
 
 
-            if ( this.requester.IsReady() )
+            if ( this.parser.ReadyToParse() )
             {
-                if(notReadyTimesCount > 0 )
+                if ( notReadyTimesCount > 0 )
                 {
                     logger.Log(Logger.LogType.Value, Logger.LogLevel.Info, "method:notReadyTimesCount", notReadyTimesCount.ToString());
                     notReadyTimesCount = 0;
                 }
 
-
-                List<string> responses = null;
+                //Get data from send files
                 try
                 {
-                    responses = this.requester.Get();
-                }catch(Exception ex )
-                {
-                    logger.LogException("this:requester.Get()", ex);
-                    this.generalStatusUC.SetNetworkStatus("Impossible de se connecter à la box !", Colors.Red);
-                    return;
-                }
-
-                
-
-
-                try
-                {
-                    this.xmlParser.Parse(data, responses.ToArray());
+                    data = this.parser.Parse();
                 }
                 catch ( Exception ex )
                 {
-                    logger.LogException("this:xmlParser.Parse()", ex);
-                    this.generalStatusUC.SetNetworkStatus("problème formatage/réseau (0x300)", Colors.Red);
+                    logger.LogException("this:parser.Parse()", ex);
+                    this.generalStatusUC.SetNetworkStatus("Problèmes de traitement des infos !", Colors.Red);
                     return;
                 }
 
-                this.timeUsage.Add(data);
+                //Real time measure
+                //
+                //Clean old data
+                while ( rtMeasures.FirstOrDefault() != null && DateTime.Now - rtMeasures.First().DateTime > new TimeSpan(0,30,0))
+                {
+                    rtMeasures.RemoveAt(0);
+                }
+
+                this.rtMeasures.Add(data);
+
+
+
+
+                //Daily measure
+                //
+                //Clean the old items
+                while( dailyMeasures.FirstOrDefault() != null && DateTime.Now - dailyMeasures.First().DateTime > new TimeSpan(40,0,0,0) )
+                {
+                    dailyMeasures.RemoveAt(0);
+                }
+                
+                //Add new item
+                if ( dailyMeasures.Count < 1 || 
+                    DateTime.Now - dailyMeasures.Last().DateTime > new TimeSpan(0, 1, 0) )
+                    dailyMeasures.Add(data);
+
+
+
 
                 this.SetWindowTextsData(data);
+
                 this.generalStatusUC.SetNetworkStatus("OK");
 
             }
@@ -170,54 +182,50 @@ namespace WpfData
                 return;
             }
 
+
+            //Prepare the next requests
             try
             {
-                this.requester.GetReady();
+                this.parser.Request();
             }
             catch ( Exception ex )
             {
-                logger.LogException("this:requester.GetReady()", ex);
-                this.generalStatusUC.SetNetworkStatus("problème connexion réseau (0x100)", Colors.Red);
+                logger.LogException("this:parser.Request()", ex);
+                this.generalStatusUC.SetNetworkStatus("Problèmes connexions réseau", Colors.Red);
 
             }
 
             Cursor = System.Windows.Input.Cursors.Arrow;
         }
 
-        private void SetWindowTextsData (NetworkDataUsage data)
+        private void SetWindowTextsData (NetworkMeasure data)
         {
 
-            double percent = Math.Round(data.GetTotal() / data.TrafficMaxLimit * 100, 2);
+            double percent = Math.Round(data.TotalMonth / data.TrafficMaxLimit * 100, 2);
 
             this.generalStatusUC.UpdateTextsData(data);
-            this.detailsStatusUC.UpdateTextsData(data, timeUsage[0]);
+            this.detailsStatusUC.UpdateTextsData(data, rtMeasures[0]);
 
-            SetNotifyIconTextData($"{data.GetTotal().ToString(false)} / {data.TrafficMaxLimit.ToString()} \n({percent}%)");
+            SetNotifyIconTextData($"{data.TotalMonth.ToString(false)} / {data.TrafficMaxLimit.ToString()} \n({percent}%)");
 
             if ( percent >= 95 )
             {
-                Background = colorHighWarning;
+                Background = App.colorHighWarning;
             }
             else if ( percent >= 75 )
             {
-                Background = colorWarning;
+                Background = App.colorWarning;
             }
             else
             {
-                Background = colorGood;
+                Background = App.colorGood;
             }
 
         }
 
-        private void SetNotifyIconTextData (string msg) => this.icon.Text = AppName + "\n" + msg;
+        private void SetNotifyIconTextData (string msg) => this.icon.Text = App.AppName + "\n" + msg;
 
-        public static void MsgBox(string message, MessageBoxImage image)
-        {
-            System.Windows.MessageBox.Show(message, AppName, MessageBoxButton.OK, image);
-        }
-
-
-
+        public static void MsgBox (string message, MessageBoxImage image) => System.Windows.MessageBox.Show(message, App.AppName, MessageBoxButton.OK, image);
 
         private void Icon_Click (object sender, EventArgs e) => this.Show();
 
@@ -226,8 +234,10 @@ namespace WpfData
         {
             DataLayer.SaveData();
             Properties.Settings.Default.Save();
+
             logger.Log(Logger.LogType.Event, Logger.LogLevel.Info, "this:Application_ApplicationExit", "Call");
             this.icon.Visible = false;
+            locker.Unlock();
         }
 
         private void ckbOver_Click (object sender, RoutedEventArgs e)
@@ -237,7 +247,6 @@ namespace WpfData
                 Topmost = this.ckbOver.IsChecked.Value;
             }
         }
-
 
         //Close window
         protected override void OnClosing (CancelEventArgs e)
@@ -250,9 +259,10 @@ namespace WpfData
         {
             try
             {
-                ChartsWindow chartsWindow = new ChartsWindow(this.timeUsage);
+                /*
+                ChartsWindow chartsWindow = new ChartsWindow(this.rtMeasures, dailyMeasures);
                 chartsWindow.Topmost = Topmost;
-                chartsWindow.Show();
+                chartsWindow.Show();*/
             }
             catch ( Exception ex )
             {

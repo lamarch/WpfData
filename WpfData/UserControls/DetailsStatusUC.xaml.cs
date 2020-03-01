@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Controls;
 
-using LiveCharts;
+using WpfData.DataStructures;
 
-namespace WpfData
+namespace WpfData.UserControls
 {
     /// <summary>
     /// Logique d'interaction pour detailsStatusUC.xaml
@@ -12,28 +11,33 @@ namespace WpfData
     public partial class DetailsStatusUC : UserControl
     {
 
-        public DetailsStatusUC ()
+        public DetailsStatusUC ( )
         {
             InitializeComponent();
             DataContext = this;
 
         }
 
-        public void UpdateTextsData(NetworkDataUsage newData, NetworkDataUsage oldData)
+        public void UpdateTextsData (NetworkMeasure newData, NetworkMeasure oldData)
         {
             //text
 
-            tbDownTotal.Text = newData.CurrentMonthDownload;
-            tbUpTotal.Text = newData.CurrentMonthUpload;
+            tbDownTotal.Text = newData.TotalDownload;
+            tbUpTotal.Text = newData.TotalUpload;
 
-            tbDownTraffic.Text = newData.CurrentDownloadRate;
-            tbUpTraffic.Text = newData.CurrentUploadRate;
+            tbDownTraffic.Text = newData.DownloadRate;
+            tbUpTraffic.Text = newData.UploadRate;
 
-            tbDownEv.Text = newData.CurrentMonthDownload - oldData.CurrentMonthDownload;
-            tbUpEv.Text = newData.CurrentMonthUpload - oldData.CurrentMonthUpload;
+            tbDownEv.Text = newData.TotalDownload - oldData.TotalDownload;
+            tbUpEv.Text = newData.TotalUpload - oldData.TotalUpload;
 
-            tbHeaderEv.Text = "Evolution depuis " + oldData.DateTime.ToString("HH:mm");
+            tbHeaderEv.Text = "Evolution depuis " + oldData.DateTime.ToString("T");
 
+            //start day
+            lblStartDay.Content = newData.StartDay;
+
+
+            //Days
 
             int daysInMonth = GetDaysBetween(DateTime.Now, DateTime.Now.AddMonths(1));
 
@@ -54,7 +58,7 @@ namespace WpfData
             Octet newDataPerDay = newData.TrafficMaxLimit / daysInMonth;
 
             //Now, the newData remaining per remaining day
-            Octet newDataRemainPerDay = (newData.TrafficMaxLimit - newData.GetTotal()) / remainingDays;
+            Octet newDataRemainPerDay = (newData.TrafficMaxLimit - newData.TotalMonth) / remainingDays;
 
 
             this.lblDataPerDayStart.Content = newDataPerDay.ToString();
@@ -63,41 +67,41 @@ namespace WpfData
 
             if ( newDataPerDay > newDataRemainPerDay )
             {
-                this.lblDataPerDayRemain.Foreground = MainWindow.colorHighWarning;
+                this.lblDataPerDayRemain.Foreground = App.colorHighWarning;
             }
             else
             {
-                this.lblDataPerDayRemain.Foreground = MainWindow.colorGood;
+                this.lblDataPerDayRemain.Foreground = App.colorGood;
             }
 
 
 
             //colorization
 
-            if ( newData.CurrentDownloadRate > Octet.FromMega(5) )
+            if ( newData.DownloadRate > Octet.FromMega(5) )
             {
-                this.tbDownTraffic.Foreground = MainWindow.colorHighWarning;
+                this.tbDownTraffic.Foreground = App.colorHighWarning;
             }
-            else if ( newData.CurrentDownloadRate > Octet.FromMega(1) )
+            else if ( newData.DownloadRate > Octet.FromMega(1) )
             {
-                this.tbDownTraffic.Foreground = MainWindow.colorWarning;
+                this.tbDownTraffic.Foreground = App.colorWarning;
             }
             else
             {
-                this.tbDownTraffic.Foreground = MainWindow.colorNormalBlack;
+                this.tbDownTraffic.Foreground = App.colorNormalBlack;
             }
 
-            if ( newData.CurrentUploadRate > Octet.FromMega(2) )
+            if ( newData.UploadRate > Octet.FromMega(2) )
             {
-                this.tbUpTraffic.Foreground = MainWindow.colorHighWarning;
+                this.tbUpTraffic.Foreground = App.colorHighWarning;
             }
-            else if ( newData.CurrentUploadRate > Octet.FromKilo(500) )
+            else if ( newData.UploadRate > Octet.FromKilo(500) )
             {
-                this.tbUpTraffic.Foreground = MainWindow.colorWarning;
+                this.tbUpTraffic.Foreground = App.colorWarning;
             }
             else
             {
-                this.tbUpTraffic.Foreground = MainWindow.colorNormalBlack;
+                this.tbUpTraffic.Foreground = App.colorNormalBlack;
             }
 
             int GetDaysBetween (DateTime start, DateTime stop) => (int)(stop - start).TotalDays;

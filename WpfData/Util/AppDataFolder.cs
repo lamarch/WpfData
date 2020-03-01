@@ -2,14 +2,10 @@
 using System.Collections.Generic;
 using System.Deployment.Application;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WpfData.Util;
 
-namespace WpfData
+namespace WpfData.Util
 {
-    static class AppDataFolder
+    internal static class AppDataFolder
     {
         public static string FolderName = "WpfData";
         public static string FolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), FolderName);
@@ -19,22 +15,21 @@ namespace WpfData
         public static void AccessFolder ( )
         {
             if ( !Directory.Exists(FolderPath) )
+            {
                 Directory.CreateDirectory(FolderPath);
+            }
 
             foreach ( FolderView fw in Views )
             {
-                if(fw != null )
+                if ( fw != null )
                 {
                     fw.PrepareAccess(FolderPath);
                 }
             }
-            
+
         }
 
-        public static string GetPath(string internalPath)
-        {
-            return Path.Combine(FolderPath, internalPath);
-        }
+        public static string GetPath (string internalPath) => Path.Combine(FolderPath, internalPath);
 
         public static string GetVersion ( )
         {
