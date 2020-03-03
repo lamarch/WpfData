@@ -68,8 +68,7 @@ namespace WpfData.Windows
             this.parser = new RequestParser(parserConfig);
             this.parser.Request();
 
-
-            //TODO: ON-COMPLETE rewrite the application on event system (request->show->wait) with Dispatchers
+            //TODO: add task bar on bottom window for network status
             //TODO: better binding on UserControls ?
 
             #region TaskBarIcon

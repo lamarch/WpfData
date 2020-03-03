@@ -13,6 +13,7 @@ namespace WpfData.Util
 
         public void Lock ( )
         {
+            AppDataFolder.AccessFolder();
             if ( !File.Exists(lockFile) )
             {
                 s = new FileStream(lockFile, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
@@ -23,6 +24,7 @@ namespace WpfData.Util
         {
             if ( s != null )
                 s.Close();
+            AppDataFolder.AccessFolder();
             if ( File.Exists(lockFile) )
             {
                 File.Delete(lockFile);
