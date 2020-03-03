@@ -150,7 +150,7 @@ namespace WpfData.Windows
 
             while ( !this.parser.ReadyToParse() )
             {
-                SetNetworkStatus($"Ralentissements bande passante ({++notReadyTimesCount} fois)");
+                SetNetworkStatus($"Ralentissements bande passante ({++notReadyTimesCount} fois)", Colors.DarkOrange);
 
                 for ( int i = 0; i < 10; i++ )
                 {
@@ -175,7 +175,7 @@ namespace WpfData.Windows
             catch ( Exception ex )
             {
                 Dispatch(( ) => logger.LogException("this:parser.Parse()", ex));
-                SetNetworkStatus("Problèmes de traitement des infos !", Colors.Red);
+                SetNetworkStatus("Défaut traitement infos", Colors.Red);
                 return;
             }
 
@@ -221,7 +221,7 @@ namespace WpfData.Windows
             catch ( Exception ex )
             {
                 Dispatch(( ) => logger.LogException("this:parser.Request()", ex));
-                SetNetworkStatus("Problèmes connexions réseau", Colors.Red);
+                SetNetworkStatus("Défaut connexion réseau", Colors.Red);
 
             }
 
@@ -229,7 +229,7 @@ namespace WpfData.Windows
 
             void SetNetworkStatus (string status, Color? col = null)
             {
-                Dispatch(( ) => this.generalStatusUC.SetNetworkStatus(status, col));
+                Dispatch(( ) => this.SetNetworkStatus(status, col));
             }
 
             void Dispatch (Action a)
@@ -237,6 +237,19 @@ namespace WpfData.Windows
                 Dispatcher.Invoke(a);
             }
 
+        }
+
+        private void SetNetworkStatus(string status, System.Windows.Media.Color? color)
+        {
+            tbNetworkStatus.Text = "Etat réseau : " + status;
+            if ( color.HasValue )
+            {
+                tbNetworkStatus.Foreground =  new SolidColorBrush(color.Value);
+            }
+            else
+            {
+                tbNetworkStatus.Foreground = new SolidColorBrush(Colors.Green);
+            }
         }
 
         private void SetWindowTextsData (NetworkMeasure data)

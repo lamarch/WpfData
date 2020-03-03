@@ -13,6 +13,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -36,5 +37,11 @@
 
             </Grid>
         </GroupBox>
+
+        <StatusBar Grid.Row="4">
+            <StatusBarItem>
+                <TextBlock x:Name="tbNetworkStatus" FontSize="15" FontWeight="SemiBold">Etat réseau : Chargement...</TextBlock>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>
