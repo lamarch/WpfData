@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace WpfData.Util
 {
@@ -11,7 +6,7 @@ namespace WpfData.Util
     {
         private static readonly string lockFile = AppDataFolder.GetPath(".lock");
         FileStream s;
-        public InstanceLocker ()
+        public InstanceLocker ( )
         {
 
         }
@@ -26,7 +21,8 @@ namespace WpfData.Util
 
         public void Unlock ( )
         {
-            s.Close();
+            if ( s != null )
+                s.Close();
             if ( File.Exists(lockFile) )
             {
                 File.Delete(lockFile);
