@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\Elève\Source\Repos\WpfData\WpfData\obj\Debug\
+C:\Users\Xavier\source\repos\WpfData\WpfData\obj\Debug\
 WpfData
 none
 false
 DEBUG;TRACE
-C:\Users\Elève\Source\Repos\WpfData\WpfData\App.xaml
+C:\Users\Xavier\source\repos\WpfData\WpfData\App.xaml
 31590490898
 
-21247619444
-133-338671007
+221738375681
+22793863758
 UserControls\DetailsStatusUC.xaml;UserControls\GeneralStatusUC.xaml;MainWindow.xaml;
 
-False
+True
 
