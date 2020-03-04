@@ -34,18 +34,5 @@ namespace WpfData.UserControls
                 tbNetUse.Text = "Utilisation normale de la bande passante.";
             }
         }
-
-        public void SetNetworkStatus (string msg, System.Windows.Media.Color? color = null)
-        {
-            tbNetStatus.Text = msg;
-            if ( color is null )
-            {
-                tbNetStatus.Foreground = new SolidColorBrush(Colors.Black);
-            }
-            else
-            {
-                tbNetStatus.Foreground = new SolidColorBrush(color.Value);
-            }
-        }
     }
 }

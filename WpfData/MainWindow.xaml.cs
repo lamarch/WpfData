@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Deployment.Application;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Threading;
 
 using WpfData.DataStructures;
 using WpfData.Requests;
@@ -23,8 +22,7 @@ namespace WpfData.Windows
     /// </summary>
     public partial class MainWindow : Window
     {
-
-        private DispatcherTimer dispatcher;
+        private static readonly TimeSpan updateWait = new TimeSpan(0, 0, 1);
         private NotifyIcon icon;
         private System.Windows.Forms.MenuItem menuItem_icon_close;
 
@@ -35,6 +33,10 @@ namespace WpfData.Windows
         private RequestParser parser;
         private Logger logger;
         private InstanceLocker locker;
+
+        private Task updateTask;
+        private bool pause;
+        private bool stop;
 
         public MainWindow ( )
         {
@@ -66,14 +68,8 @@ namespace WpfData.Windows
             this.parser = new RequestParser(parserConfig);
             this.parser.Request();
 
-
-            //TODO: rewrite the application on event system (request->show->wait) with Dispatchers
+            //TODO: add task bar on bottom window for network status
             //TODO: better binding on UserControls ?
-            //config the timer
-            this.dispatcher = new DispatcherTimer();
-            this.dispatcher.Interval = TimeSpan.FromSeconds(1.5f);
-            this.dispatcher.Tick += this.timerTick;
-            this.dispatcher.Start();
 
             #region TaskBarIcon
             //config the taskbar icon menu item
@@ -102,9 +98,11 @@ namespace WpfData.Windows
 
             //verify the single instance lock
             locker = new InstanceLocker();
-            if( !App.IsDebugMode )
+            if ( !App.IsDebugMode )
             {
+#pragma warning disable CS0162 // Code inaccessible détecté
                 if ( !locker.Check() )
+#pragma warning restore CS0162 // Code inaccessible détecté
                 {
                     MsgBox("Impossible d'ouvrir plusieurs instances de cette application !", MessageBoxImage.Warning);
                     System.Windows.Application.Current.Shutdown();
@@ -112,90 +110,146 @@ namespace WpfData.Windows
                 locker.Lock();
             }
 
+            updateTask = Task.Run(( ) => UpdateLoop());
+        }
+
+        private async Task UpdateLoop ( )
+        {
+            DateTime callTime = new DateTime();
+            while ( !stop )
+            {
+                while ( pause )
+                {
+                    await Task.Delay(100);
+                    if ( stop )
+                        return;
+                }
+                callTime = DateTime.Now;
+                await Update();
+
+                var total = DateTime.Now - callTime;
+                if ( total > updateWait )
+                {
+                    for ( int i = 0; i < 10; i++ )
+                    {
+                        await Task.Delay((int)(total - updateWait).TotalMilliseconds / 10);
+                        if ( stop )
+                            return;
+                    }
+                }
+            }
         }
 
         private int notReadyTimesCount = 0;
 
-        private void timerTick (object sender, EventArgs e)
+        private async Task Update ( )
         {
+
             NetworkMeasure data;
-            Cursor = System.Windows.Input.Cursors.Wait;
+            Dispatch(( ) => this.Cursor = System.Windows.Input.Cursors.Wait);
 
-
-            if ( this.parser.ReadyToParse() )
+            while ( !this.parser.ReadyToParse() )
             {
-                if ( notReadyTimesCount > 0 )
+                SetNetworkStatus($"Ralentissements bande passante ({++notReadyTimesCount} fois)", Colors.DarkOrange);
+
+                for ( int i = 0; i < 10; i++ )
                 {
-                    logger.Log(Logger.LogType.Value, Logger.LogLevel.Info, "method:notReadyTimesCount", notReadyTimesCount.ToString());
-                    notReadyTimesCount = 0;
+                    await Task.Delay((int)updateWait.TotalMilliseconds / 10);
+                    if ( stop )
+                        return;
                 }
-
-                //Get data from send files
-                try
-                {
-                    data = this.parser.Parse();
-                }
-                catch ( Exception ex )
-                {
-                    logger.LogException("this:parser.Parse()", ex);
-                    this.generalStatusUC.SetNetworkStatus("Problèmes de traitement des infos !", Colors.Red);
-                    return;
-                }
-
-                //Real time measure
-                //
-                //Clean old data
-                while ( rtMeasures.FirstOrDefault() != null && DateTime.Now - rtMeasures.First().DateTime > new TimeSpan(0,30,0))
-                {
-                    rtMeasures.RemoveAt(0);
-                }
-
-                this.rtMeasures.Add(data);
-
-
-
-
-                //Daily measure
-                //
-                //Clean the old items
-                while( dailyMeasures.FirstOrDefault() != null && DateTime.Now - dailyMeasures.First().DateTime > new TimeSpan(40,0,0,0) )
-                {
-                    dailyMeasures.RemoveAt(0);
-                }
-                
-                //Add new item
-                if ( dailyMeasures.Count < 1 || 
-                    DateTime.Now - dailyMeasures.Last().DateTime > new TimeSpan(0, 1, 0) )
-                    dailyMeasures.Add(data);
-
-
-
-
-                this.SetWindowTextsData(data);
-
-                this.generalStatusUC.SetNetworkStatus("OK");
 
             }
-            else
+
+            if ( notReadyTimesCount > 0 && notReadyTimesCount > 1 )
             {
-                generalStatusUC.SetNetworkStatus($"Ralentissements bande passante ({++notReadyTimesCount} fois)");
+                Dispatch(( ) => logger.Log(Logger.LogType.Value, Logger.LogLevel.Info, "method:notReadyTimesCount", notReadyTimesCount.ToString()));
+            }
+            notReadyTimesCount = 0;
+
+            //Get data from send files
+            try
+            {
+                data = this.parser.Parse();
+            }
+            catch ( Exception ex )
+            {
+                Dispatch(( ) => logger.LogException("this:parser.Parse()", ex));
+                SetNetworkStatus("Défaut traitement infos", Colors.Red);
                 return;
             }
 
+            //Real time measure
+            //
+            //Clean old data
+            while ( rtMeasures.FirstOrDefault() != null && DateTime.Now - rtMeasures.First().DateTime > new TimeSpan(0, 30, 0) )
+            {
+                Dispatch(( ) => rtMeasures.RemoveAt(0));
+            }
 
-            //Prepare the next requests
+            Dispatch(( ) => this.rtMeasures.Add(data));
+
+
+
+
+            //Daily measure
+            //
+            //Clean the old items
+            while ( dailyMeasures.FirstOrDefault() != null && DateTime.Now - dailyMeasures.First().DateTime > new TimeSpan(40, 0, 0, 0) )
+            {
+                Dispatch(( ) => dailyMeasures.RemoveAt(0));
+            }
+
+            //Add new item
+            if ( dailyMeasures.Count < 1 ||
+                DateTime.Now - dailyMeasures.Last().DateTime > new TimeSpan(0, 1, 0) )
+                Dispatch(( ) => dailyMeasures.Add(data));
+
+
+
+
+            Dispatch(( ) => this.SetWindowTextsData(data));
+
+            SetNetworkStatus("OK");
+
+
+            //Prepare the next request
             try
             {
                 this.parser.Request();
             }
             catch ( Exception ex )
             {
-                logger.LogException("this:parser.Request()", ex);
-                this.generalStatusUC.SetNetworkStatus("Problèmes connexions réseau", Colors.Red);
+                Dispatch(( ) => logger.LogException("this:parser.Request()", ex));
+                SetNetworkStatus("Défaut connexion réseau", Colors.Red);
 
             }
 
-            Cursor = System.Windows.Input.Cursors.Arrow;
+            Dispatch(( ) => this.Cursor = System.Windows.Input.Cursors.Arrow);
+
+            void SetNetworkStatus (string status, Color? col = null)
+            {
+                Dispatch(( ) => this.SetNetworkStatus(status, col));
+            }
+
+            void Dispatch (Action a)
+            {
+                Dispatcher.Invoke(a);
+            }
+
+        }
+
+        private void SetNetworkStatus(string status, System.Windows.Media.Color? color)
+        {
+            tbNetworkStatus.Text = "Etat réseau : " + status;
+            if ( color.HasValue )
+            {
+                tbNetworkStatus.Foreground =  new SolidColorBrush(color.Value);
+            }
+            else
+            {
+                tbNetworkStatus.Foreground = new SolidColorBrush(Colors.Green);
+            }
         }
 
         private void SetWindowTextsData (NetworkMeasure data)
@@ -227,11 +281,12 @@ namespace WpfData.Windows
 
         public static void MsgBox (string message, MessageBoxImage image) => System.Windows.MessageBox.Show(message, App.AppName, MessageBoxButton.OK, image);
 
-        private void Icon_Click (object sender, EventArgs e) => this.Show();
+        private void Icon_Click (object sender, EventArgs e) => this.Activate();
 
         //Application exit
         private void Application_ApplicationExit (object sender, EventArgs e)
         {
+            stop = true;
             DataLayer.SaveData();
             Properties.Settings.Default.Save();
 
@@ -251,8 +306,15 @@ namespace WpfData.Windows
         //Close window
         protected override void OnClosing (CancelEventArgs e)
         {
+            pause = true;
             e.Cancel = true;
             this.Hide();
+        }
+
+        protected override void OnActivated (EventArgs e)
+        {
+            pause = false;
+            base.OnActivated(e);
         }
 
         private void btShowGraphs_Click (object sender, RoutedEventArgs e)
