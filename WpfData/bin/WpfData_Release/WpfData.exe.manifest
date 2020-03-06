@@ -175,14 +175,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="WpfData.exe" size="481192">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="WpfData.exe" size="496712">
       <assemblyIdentity name="WpfData" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>AZq3XeWsGWt3z4qhJKjuHk91gtfSr+a/D7+uWw0LyAk=</dsig:DigestValue>
+        <dsig:DigestValue>vpPUgYJvLyC2PWd3QtrWKe5qQ+wWGcjJB2Z6dk3tNwo=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -193,6 +193,15 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
       <dsig:DigestValue>XGg9gvlPfmVsF23VocWwHr/TtZs0BPvyOJevEmMdF5w=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Resources\icon_update.png" size="210">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>9w9ndgQYmRHkwL6lATvDfzlxMibgx1A7NXwKrcmJmf0=</dsig:DigestValue>
     </hash>
   </file>
   <file name="WpfData.exe.config" size="1291">

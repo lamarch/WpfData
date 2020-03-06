@@ -29,7 +29,7 @@ namespace WpfData.Windows
         private List<NetworkMeasure> rtMeasures;
         private List<NetworkMeasure> dailyMeasures;
 
-        private RequestParserConfig parserConfig;
+        private Configuration parserConfig;
         private RequestParser parser;
         private Logger logger;
         private InstanceLocker locker;
@@ -57,10 +57,10 @@ namespace WpfData.Windows
             //TODO: rewrite (one more time) the request system
             //TODO: write a configurable request system with JSON
             //config the new parserConfig
-            this.parserConfig = new RequestParserConfig("http://192.168.1.1", new List<RequestParserFile>()
+            this.parserConfig = new Configuration(new Uri("http://192.168.1.1"), new List<RequestParserFile>()
                 {
-                    new RequestParserFile("/api/monitoring/traffic-statistics", ("TotalUpload", NetworkMeasureProperty.TotalUpload), ("TotalDownload", NetworkMeasureProperty.TotalDownload), ("CurrentUploadRate", NetworkMeasureProperty.UploadRate), ("CurrentDownloadRate", NetworkMeasureProperty.DownloadRate)),
-                    new RequestParserFile("/api/monitoring/start_date", ("trafficmaxlimit", NetworkMeasureProperty.TrafficMaxLimit), ("StartDay", NetworkMeasureProperty.StartDay))
+                    new RequestParserFile("api/monitoring/traffic-statistics", ("CurrentUpload", NetworkMeasureProperty.CurrentUpload), ("CurrentDownload", NetworkMeasureProperty.CurrentDownload), ("CurrentUploadRate", NetworkMeasureProperty.UploadRate), ("CurrentDownloadRate", NetworkMeasureProperty.DownloadRate)),
+                    new RequestParserFile("api/monitoring/start_date", ("trafficmaxlimit", NetworkMeasureProperty.TrafficMaxLimit), ("StartDay", NetworkMeasureProperty.StartDay))
                 });
 
 
@@ -115,24 +115,27 @@ namespace WpfData.Windows
 
         private async Task UpdateLoop ( )
         {
-            DateTime callTime = new DateTime();
             while ( !stop )
             {
+                //If app is background
                 while ( pause )
                 {
                     await Task.Delay(100);
                     if ( stop )
                         return;
                 }
-                callTime = DateTime.Now;
+
+
+                DateTime callTime = DateTime.Now;
                 await Update();
 
+                //Wait relative to time passed in Update method
                 var total = DateTime.Now - callTime;
-                if ( total > updateWait )
+                if ( total < updateWait )
                 {
                     for ( int i = 0; i < 10; i++ )
                     {
-                        await Task.Delay((int)(total - updateWait).TotalMilliseconds / 10);
+                        await Task.Delay((int)(updateWait - total).TotalMilliseconds / 10);
                         if ( stop )
                             return;
                     }
@@ -150,18 +153,21 @@ namespace WpfData.Windows
 
             while ( !this.parser.ReadyToParse() )
             {
-                SetNetworkStatus($"Ralentissements bande passante ({++notReadyTimesCount} fois)", Colors.DarkOrange);
+                SetNetworkStatus($"Attention : Ralentissements bande passante ({++notReadyTimesCount} fois)", Colors.DarkOrange);
 
                 for ( int i = 0; i < 10; i++ )
                 {
-                    await Task.Delay((int)updateWait.TotalMilliseconds / 10);
+                    await Task.Delay((int)updateWait.TotalMilliseconds / 100);
                     if ( stop )
                         return;
                 }
 
             }
 
-            if ( notReadyTimesCount > 0 && notReadyTimesCount > 1 )
+            SetNetworkStatus("OK");
+
+
+            if ( notReadyTimesCount > 2 )
             {
                 Dispatch(( ) => logger.Log(Logger.LogType.Value, Logger.LogLevel.Info, "method:notReadyTimesCount", notReadyTimesCount.ToString()));
             }
@@ -175,7 +181,7 @@ namespace WpfData.Windows
             catch ( Exception ex )
             {
                 Dispatch(( ) => logger.LogException("this:parser.Parse()", ex));
-                SetNetworkStatus("Défaut traitement infos", Colors.Red);
+                SetNetworkStatus("Défaut : traitement infos", Colors.Red);
                 return;
             }
 
@@ -210,7 +216,6 @@ namespace WpfData.Windows
 
             Dispatch(( ) => this.SetWindowTextsData(data));
 
-            SetNetworkStatus("OK");
 
 
             //Prepare the next request
@@ -413,6 +418,11 @@ namespace WpfData.Windows
                 logger.Log(Logger.LogType.Value, Logger.LogLevel.Info, "static:ApplicationDeployment.IsNetworkDeployed", "false");
                 MsgBox("Vous ne possedez pas une version de l'application déployée par ClickOnce.", MessageBoxImage.Exclamation);
             }
+        }
+
+        private void btShowConfig_Click (object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

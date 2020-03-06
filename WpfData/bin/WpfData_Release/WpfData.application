@@ -14,14 +14,14 @@
     <framework targetVersion="4.7.2" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="WpfData.exe.manifest" size="11616">
+    <dependentAssembly dependencyType="install" codebase="WpfData.exe.manifest" size="12018">
       <assemblyIdentity name="WpfData.exe" version="1.4.4.0" publicKeyToken="0000000000000000" language="fr" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>Iu4Cr1zPiK4ivvfOfAp73rJ3pUAVqqytaYa4KGzUvmU=</dsig:DigestValue>
+        <dsig:DigestValue>GxmKhCWI9r9KxEYiU/fNRRGVCKcccTIbNcfBFAvBcuI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

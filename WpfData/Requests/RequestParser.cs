@@ -11,11 +11,11 @@ namespace WpfData.Requests
 {
     internal class RequestParser
     {
-        private RequestParserConfig config;
+        private Configuration config;
         private HttpClient httpClient = new HttpClient();
         private List<Task<Dictionary<NetworkMeasureProperty, string>>> tasks;
 
-        public RequestParser (RequestParserConfig config)
+        public RequestParser (Configuration config)
         {
             this.config = config ?? throw new ArgumentNullException(nameof(config));
         }
@@ -54,12 +54,10 @@ namespace WpfData.Requests
             {
                 if ( !task.IsCompleted )
                 {
-                    throw new Exception("A task was not completed !");
+                    task.Wait();
                 }
 
-                Dictionary<NetworkMeasureProperty, string> values = null;
-
-                values = task.Result;
+                Dictionary<NetworkMeasureProperty, string> values = task.Result;
 
                 foreach ( var value in values )
                 {
@@ -78,10 +76,10 @@ namespace WpfData.Requests
             return measure;
         }
 
-        private async Task<Dictionary<NetworkMeasureProperty, string>> ParseFile (RequestParserFile file, string path)
+        private async Task<Dictionary<NetworkMeasureProperty, string>> ParseFile (RequestParserFile file, Uri path)
         {
             Dictionary<NetworkMeasureProperty, string> results = new Dictionary<NetworkMeasureProperty, string>();
-            string adress = path + file.name;
+            Uri adress = new Uri(path.ToString() + file.path);
 
             string xml = "";
 
