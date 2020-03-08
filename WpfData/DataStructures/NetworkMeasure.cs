@@ -6,8 +6,8 @@ namespace WpfData.DataStructures
     [Serializable]
     public class NetworkMeasure
     {
-        public readonly Octet TotalDownload = new Octet();
-        public readonly Octet TotalUpload = new Octet();
+        public readonly Octet CurrentDownload = new Octet();
+        public readonly Octet CurrentUpload = new Octet();
         public readonly Octet DownloadRate = new Octet();
         public readonly Octet UploadRate = new Octet();
 
@@ -23,8 +23,8 @@ namespace WpfData.DataStructures
 
         public NetworkMeasure (Octet totalDownload, Octet totalUpload, Octet downloadRate, Octet uploadRate, Octet trafficMaxLimit, int startDay, DateTime dateTime)
         {
-            this.TotalDownload = totalDownload;
-            this.TotalUpload = totalUpload;
+            this.CurrentDownload = totalDownload;
+            this.CurrentUpload = totalUpload;
             this.DownloadRate = downloadRate;
             this.UploadRate = uploadRate;
             this.TrafficMaxLimit = trafficMaxLimit;
@@ -32,7 +32,7 @@ namespace WpfData.DataStructures
             this.DateTime = dateTime;
         }
 
-        public Octet TotalMonth => TotalDownload + TotalUpload;
+        public Octet TotalMonth => CurrentDownload + CurrentUpload;
         public Octet Rate => UploadRate + DownloadRate;
 
         public void SetProperty (NetworkMeasureProperty prop, string val)
@@ -42,8 +42,8 @@ namespace WpfData.DataStructures
             switch ( prop )
             {
                 case NetworkMeasureProperty.DownloadRate:
-                case NetworkMeasureProperty.TotalDownload:
-                case NetworkMeasureProperty.TotalUpload:
+                case NetworkMeasureProperty.CurrentDownload:
+                case NetworkMeasureProperty.CurrentUpload:
                 case NetworkMeasureProperty.UploadRate:
                 case NetworkMeasureProperty.TrafficMaxLimit:
                     SetProperty(prop, Octet.FromOctet(dbVal));

@@ -22,14 +22,14 @@ namespace WpfData.UserControls
         {
             //text
 
-            tbDownTotal.Text = newData.TotalDownload;
-            tbUpTotal.Text = newData.TotalUpload;
+            tbDownTotal.Text = newData.CurrentDownload;
+            tbUpTotal.Text = newData.CurrentUpload;
 
             tbDownTraffic.Text = newData.DownloadRate;
             tbUpTraffic.Text = newData.UploadRate;
 
-            tbDownEv.Text = newData.TotalDownload - oldData.TotalDownload;
-            tbUpEv.Text = newData.TotalUpload - oldData.TotalUpload;
+            tbDownEv.Text = newData.CurrentDownload - oldData.CurrentDownload;
+            tbUpEv.Text = newData.CurrentUpload - oldData.CurrentUpload;
 
             tbHeaderEv.Text = "Evolution depuis " + oldData.DateTime.ToString("T");
 

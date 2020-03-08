@@ -27,13 +27,36 @@
             <UserControls:DetailsStatusUC x:Name="detailsStatusUC"/>
         </GroupBox>
 
-        <GroupBox Header="Paramètres :" Grid.Row="3" BorderBrush="Black" >
+        <GroupBox Header="Paramètres :" Grid.Row="3" BorderBrush="Black" Padding="5">
             <Grid Height="69">
-                <Label Visibility="Hidden" Content="secondes" HorizontalAlignment="Left" Margin="319,177,0,0" VerticalAlignment="Top"/>
                 <CheckBox IsChecked="False"  x:Name="ckbOver" Click="ckbOver_Click" Content="Toujours au dessus des autres fenêtres" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" ClickMode="Press"/>
-                <Button x:Name="btShowGraphs" IsEnabled="False" Click="btShowGraphs_Click" Content="Voir les graphiques" HorizontalAlignment="Left" Margin="441,37,0,0" VerticalAlignment="Top" Width="144"/>
-                <Button x:Name="btShowLogs" Click="btShowLogs_Click" Content="Voir les logs" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Width="144"/>
-                <Button x:Name="btUpdate" Click="btUpdate_Click" Content="Mise à jour" HorizontalAlignment="Left" Margin="234,37,0,0" VerticalAlignment="Top" Width="144"/>
+                <StackPanel Orientation="Horizontal" Margin="10,30,10,10">
+                    <Button x:Name="btShowLogs" Click="btShowLogs_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="144">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center">Logs</TextBlock>
+                            <Image Source="Resources/icon_logs.png" VerticalAlignment="Center" Margin="5" Width="16" Height="16"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="btShowConfig" IsEnabled="False" Click="btShowConfig_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="144">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center">Configuration</TextBlock>
+                            <Image Source="Resources/icon_config.png" VerticalAlignment="Center" Margin="5" Width="16" Height="16"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="btUpdate" Click="btUpdate_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="164">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center">Mise à jour</TextBlock>
+                            <Image Source="Resources/icon_refresh.png" VerticalAlignment="Center" Margin="5" Width="16" Height="16"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="btShowGraphs" IsEnabled="False" Click="btShowGraphs_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="144">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center">Graphiques</TextBlock>
+                            <Image Source="Resources/icon_charts.png" VerticalAlignment="Center" Margin="5" Width="16" Height="16"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
 
             </Grid>
         </GroupBox>
